@@ -1,0 +1,6 @@
+---
+title: "STA 325 Project Proposal"
+author: "Ethan Shen, Steven Herrera, Malavi Ravindran, Austin Jia"
+date: "10/6/2019"
+output: html_document
+---
