@@ -15,8 +15,22 @@ library(tidyverse)
 
 ```{r}
 tweets <- read_csv("tweet_global_warming.csv") %>%
-  select(tweet)
+  select(tweet, existence)
+head(tweets)
 ```
 
+## Data Source 
+
+## Predictors and Response
+
+We will be using the `tweet` column as our predictor. Our response variable will be `existence`. 
+
+## Data Type 
+
+`tweet` is a column that contains various, and is unstructured in the sense that it does not fall into a specific variable category (it's not continuous or discrete). `existence` is a nominal categorical variable. 
+
+## Data Scraping / Wrangling 
+
+We will be using various NLP techniques to transform the `tweet` column, such as determining word frequency (how often a word appears in these tweets), word length, lexical diversity (the number of unique words used in a tweet), and lexical density (the number of unique words divided by the total number of words for each tweet).
 
 # Project Roadmap 
