@@ -5,8 +5,18 @@ date: "`r format(Sys.time(), '%B %d %Y')`"
 output: rmdformats::readthedown
 ---
 
+```{r}
+library(tidyverse)
+```
+
 # Project Summary 
 
 # Data Description 
+
+```{r}
+tweets <- read_csv("tweet_global_warming.csv") %>%
+  select(tweet)
+```
+
 
 # Project Roadmap 
