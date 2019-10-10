@@ -28,8 +28,8 @@ library(rvest)
 
 # Data Description 
 
-```{r}
-tweets <- read_csv("tweet_global_warming.csv") %>%
+```{r tweets-data, warning=FALSE, message=FALSE}
+tweets <- read_csv("tweet_global_warming.csv", col_names=TRUE) %>%
   select(tweet, existence)
 tweets %>%
   head(100)
@@ -45,7 +45,7 @@ We will be using the `tweet` column as our predictor. Our response variable will
 
 ## Data Type 
 
-`tweet` is a column that contains various, and is unstructured in the sense that it does not fall into a specific variable category (it's not continuous or discrete). `existence` is a nominal categorical variable. 
+`tweet` is a column that contains various words and is unstructured in the sense that it does not fall into a specific variable category (it's not continuous or discrete). `existence` is a nominal categorical variable. 
 
 ## Data Scraping / Wrangling 
 
