@@ -121,7 +121,8 @@ $(document).ready(function () {
 </div>
 
 <div id="main">
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)
+<span class="kw">library</span>(rvest)</code></pre></div>
 <div id="project-summary" class="section level1">
 <h1>Project Summary</h1>
 <div id="key-project-objectives" class="section level2">
@@ -147,16 +148,22 @@ $(document).ready(function () {
 ##   existence = col_character(),
 ##   existence.confidence = col_double()
 ## )</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(tweets)</code></pre></div>
-<pre><code>## # A tibble: 6 x 2
-##   tweet                                                           existence
-##   &lt;chr&gt;                                                           &lt;chr&gt;    
-## 1 Global warming report urges governments to act|BRUSSELS, Belgi… Yes      
-## 2 Fighting poverty and global warming in Africa [link]            Yes      
-## 3 Carbon offsets: How a Vatican forest failed to reduce global w… Yes      
-## 4 Carbon offsets: How a Vatican forest failed to reduce global w… Yes      
-## 5 URUGUAY: Tools Needed for Those Most Vulnerable to Climate Cha… Yes      
-## 6 RT @sejorg: RT @JaymiHeimbuch: Ocean Saltiness Shows Global Wa… Yes</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tweets <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">head</span>(<span class="dv">100</span>)</code></pre></div>
+<pre><code>## # A tibble: 100 x 2
+##    tweet                                                          existence
+##    &lt;chr&gt;                                                          &lt;chr&gt;    
+##  1 Global warming report urges governments to act|BRUSSELS, Belg… Yes      
+##  2 Fighting poverty and global warming in Africa [link]           Yes      
+##  3 Carbon offsets: How a Vatican forest failed to reduce global … Yes      
+##  4 Carbon offsets: How a Vatican forest failed to reduce global … Yes      
+##  5 URUGUAY: Tools Needed for Those Most Vulnerable to Climate Ch… Yes      
+##  6 RT @sejorg: RT @JaymiHeimbuch: Ocean Saltiness Shows Global W… Yes      
+##  7 Global warming evidence all around us|A message to global war… Yes      
+##  8 Migratory Birds' New Climate Change Strategy: Stay Home [link] Yes      
+##  9 Southern Africa: Competing for Limpopo Water: Climate change … Yes      
+## 10 Global warming to impact wheat, rice production in India|Ludh… Yes      
+## # … with 90 more rows</code></pre>
 <div id="data-source" class="section level2">
 <h2>Data Source</h2>
 <p>We got the data from <a href="https://www.figure-eight.com/data-for-everyone/" class="uri">https://www.figure-eight.com/data-for-everyone/</a>.</p>

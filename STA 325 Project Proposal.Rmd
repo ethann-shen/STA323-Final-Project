@@ -7,6 +7,7 @@ output: rmdformats::readthedown
 
 ```{r warning=FALSE, message=FALSE}
 library(tidyverse)
+library(rvest)
 ```
 
 # Project Summary 
@@ -30,7 +31,8 @@ library(tidyverse)
 ```{r}
 tweets <- read_csv("tweet_global_warming.csv") %>%
   select(tweet, existence)
-head(tweets)
+tweets %>%
+  head(100)
 ```
 
 ## Data Source 
