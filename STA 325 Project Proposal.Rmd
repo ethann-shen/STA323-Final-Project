@@ -21,6 +21,8 @@ head(tweets)
 
 ## Data Source 
 
+We got the data from https://www.figure-eight.com/data-for-everyone/. 
+
 ## Predictors and Response
 
 We will be using the `tweet` column as our predictor. Our response variable will be `existence`. 
