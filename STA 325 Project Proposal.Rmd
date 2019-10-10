@@ -11,6 +11,20 @@ library(tidyverse)
 
 # Project Summary 
 
+## Key Project Objectives 
+
+
+## Project Plans
+
+
+
+## Importance of this Project
+
+
+## Other Relevant Information 
+
+
+
 # Data Description 
 
 ```{r}
@@ -36,3 +50,10 @@ We will be using the `tweet` column as our predictor. Our response variable will
 We will be using various NLP techniques to transform the `tweet` column, such as determining word frequency (how often a word appears in these tweets), word length, lexical diversity (the number of unique words used in a tweet), and lexical density (the number of unique words divided by the total number of words for each tweet).
 
 # Project Roadmap 
+
+## Inference and Prediction Goals
+
+## Modeling Strategies
+
+## Selecting Good Model
+
