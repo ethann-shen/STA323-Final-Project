@@ -108,8 +108,8 @@ $(document).ready(function () {
       <li><a href="#data-description">Data Description</a><ul>
       <li><a href="#data-sources">Data Sources</a></li>
       <li><a href="#predictors-and-response">Predictors and Response</a></li>
-      <li><a href="#data-type">Data Type</a></li>
       <li><a href="#data-scraping-wrangling">Data Scraping / Wrangling</a></li>
+      <li><a href="#data-type">Data Type</a></li>
       </ul></li>
       <li><a href="#project-roadmap">Project Roadmap</a><ul>
       <li><a href="#inference-and-prediction-goals">Inference and Prediction Goals</a></li>
@@ -129,13 +129,13 @@ $(document).ready(function () {
 <p>According to US News’ Education Rankings, North Carolina ranks <strong>12th</strong> for higher education and <strong>28th</strong> for Pre-K-12 education. These rankings are determined by a number of factors, including data on the percentage of adults with associate degrees or higher, the rates of students completing public 4-year and 2-year college programs, and average tuition for colleges, being some of those factors, while, for K-12 programs, the process of determing ranks is even more complex. Some of these factors include statistics such as high school graduation rate, preschool enrollment, standardized test scores in math and reading, and college readiness based on SAT and ACT scores. While the rankings are flawed with subjective bias, we seek to understand the K-12 education pipeline among several school districts in NC and relationships found among exploring what factors influence the ability to perform well on standardized tests.</p>
 <div id="key-project-objectives" class="section level2">
 <h2>Key Project Objectives</h2>
-<p>Our objectives are as follow: <strong>(1)</strong> develop a model to understand inference (and prioritize interpretability) among students that score high on the SAT, ACT, and AP exams; <strong>(2)</strong> complete K-fold cross-validation to determine the best model; and <strong>(3)</strong> predict and interpret whether there is a significant difference between binary explanatory variables using bootstrap simulations.</p>
+<p>Our objectives are as follow: <strong>(1)</strong> develop a model to understand inference (and prioritize interpretability) among schools that score high on the SAT, ACT, and NC school growth index; <strong>(2)</strong> complete K-fold cross-validation to determine the best model; and <strong>(3)</strong> predict and interpret whether there is a significant difference between binary explanatory variables using bootstrap simulations.</p>
 </div>
 <div id="high-level-summary-of-project-plans" class="section level2">
 <h2>High-level Summary of Project Plans</h2>
 <p>In order to meet our objectives, we will follow these steps:</p>
 <ol style="list-style-type: decimal">
-<li><p>Complete necessary exploratory data analysis to understand key variables in our model to predict SAT, ACT, and AP exams, each.</p></li>
+<li><p>Complete necessary exploratory data analysis to understand key variables in our model to predict SAT, ACT, and NC school growth index score, each.</p></li>
 <li><p>Fit several models, including, but not limited to, linear regression, ridge regression, polynomial regression, and splines.</p></li>
 <li><p>Conduct K-fold cross validation and output important values, such as AIC and test MSE, to choose the best model.</p></li>
 <li><p>Conclude which model works the best and put together a summary of the findings.</p></li>
@@ -144,7 +144,7 @@ $(document).ready(function () {
 </div>
 <div id="importance-of-this-project-and-who-can-benefit-from-this" class="section level2">
 <h2>Importance of this Project and Who Can Benefit From This</h2>
-<p>As students that attend a private research university in North Carolina, a state with a rich and long history of putting education first (with key political figures like former Governor and US Senator Terry Sanford) and institutionalizing these accomplishments (with the development of eponymous associations like the Research Triangle), we believe making steps towards understanding the larger sociopolitical nuances of education data research, contextualizing this information, and disseminating it to our peers could make huge strides in contributing to local school district efforts to reach higher educational outcomes. We pride ourselves on being students that care about being leaders of the community, but we often fail to understand where those additional resources need to be allocated or what tangible efforts we can make to close the education gap. Nelson Mandela once said “Education is the most powerful weapon which you can use to change the world.” If we can dedicate our knowledge of machine learning and data mining to something as important as education (especially in a state that does so much for us) by investing in our future, then we can begin to have these important conversations about our world’s most difficult issues to solve, such as climate change.</p>
+<p>As students that attend a private research university in North Carolina, a state with a rich and long history of putting education first (with key political figures like former Governor and US Senator Terry Sanford) and institutionalizing these accomplishments (with the development of eponymous associations like the Research Triangle), we believe making steps towards understanding the larger sociopolitical nuances of education data research, contextualizing this information, and disseminating it to our peers could make huge strides in contributing to local school district efforts to reach higher educational outcomes. We pride ourselves on being students that care about being leaders of the community, but we often fail to understand where those additional resources need to be allocated or what tangible efforts we can make to close the education gap. Nelson Mandela once said “Education is the most powerful weapon which you can use to change the world.” If we can dedicate our knowledge of machine learning and data mining to something as important as education (especially in a state that does so much for us) by investing in our future, then we can begin to have these important conversations about our world’s most difficult issues to solve, such as climate change. Conducting our statistical analysis could bridge communication among Duke students to serve certain areas of NC through summer research experiences, education policy fellowships, and/or non-profit organization during-semester volunteering.</p>
 </div>
 <div id="other-relevant-information" class="section level2">
 <h2>Other Relevant Information</h2>
@@ -156,76 +156,370 @@ $(document).ready(function () {
 <h1>Data Description</h1>
 <div id="data-sources" class="section level2">
 <h2>Data Sources</h2>
-<p>After considering many resources, we decided to reach out to the Carolina Population Center at UNC, in which we expressed our interests in data related to NC. Although we scheduled a meeting with them on November 15, we won’t have enough time to fully go over the data sources necessary for the type of research we mentioned above in a timely manner, so we decided to just consider many things and debrief with them our findings. Here is the link for the publicly available data: <a href="http://www.ncpublicschools.org/accountability/reporting/">NC Public Schools Analysis and Reporting</a>. We will also be working with data only from the 2018-2019 school year, and, specifically, ACT data from the 2018 11th grade scores and the 2018 SAT scores in NC.</p>
+<p>After considering many resources, we decided to reach out to the Carolina Population Center at UNC, in which we expressed our interests in data related to NC. Although we scheduled a meeting with them on November 15, we won’t have enough time to fully go over the data sources necessary for the type of research we mentioned above in a timely manner, so we decided to just consider many things and debrief with them our findings. Here is the link for the publicly available data: <a href="http://www.ncpublicschools.org/accountability/reporting/">NC Public Schools Analysis and Reporting</a>. We will also be working with data only from the 2018-2019 school year, and, specifically, ACT data from the 2018 11th grade scores and the <a href="http://www.ncpublicschools.org/accountability/reporting/sat/">2018 SAT scores in NC</a>.</p>
 </div>
 <div id="predictors-and-response" class="section level2">
 <h2>Predictors and Response</h2>
-</div>
-<div id="data-type" class="section level2">
-<h2>Data Type</h2>
+<p>Here is an outline for each of our datasets and the model variable types we would explore:</p>
+<ol style="list-style-type: decimal">
+<li>SAT
+<ul>
+<li>Response: <code>satScoreTotal</code></li>
+</ul></li>
+<li>ACT
+<ul>
+<li>Response: <code>benchmarkPercent</code></li>
+</ul></li>
+<li>NC School Growth Index
+<ul>
+<li>Response: <code>indexScore</code></li>
+</ul></li>
+</ol>
+<p>While we haven’t yet joined our datasets, we plan on heavily using the <code>percentTested</code> and <code>numberTested</code> variables from the <strong>SAT</strong> dataset, the <code>region</code> and <code>categories</code> variables in the <strong>ACT</strong> dataset (<code>hurricaneDays</code> also shared with the Met dataset), and the <code>growthStatus</code> and <code>growthMet</code> variables from the <strong>Met</strong> dataset. Additionally, we would ideally combine data from the SAT and ACT datasets to focus on predicting the NC school growth index score, as this is considered the most important predictor of school success since the past year.</p>
 </div>
 <div id="data-scraping-wrangling" class="section level2">
 <h2>Data Scraping / Wrangling</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sat_<span class="dv">2018</span> &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;sat_2018.csv&quot;</span>)</code></pre></div>
-<pre><code>## Parsed with column specification:
-## cols(
-##   `School System &amp; School` = col_character(),
-##   ...2 = col_character(),
-##   `# Tested` = col_character(),
-##   `% Tested` = col_character(),
-##   Total = col_character(),
-##   ERW = col_character(),
-##   Math = col_character()
-## )</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sat &lt;-<span class="st"> </span>sat_<span class="dv">2018</span> <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">school =</span> <span class="st">`</span><span class="dt">...2</span><span class="st">`</span>,
-         <span class="dt">percentTested =</span> <span class="kw">as.double</span>(<span class="st">`</span><span class="dt">% Tested</span><span class="st">`</span>),
-         <span class="dt">numberTested =</span> <span class="kw">as.numeric</span>(<span class="st">`</span><span class="dt"># Tested</span><span class="st">`</span>),
-         <span class="dt">satScoreTotal =</span> <span class="kw">as.numeric</span>(<span class="st">`</span><span class="dt">Total</span><span class="st">`</span>),
-         <span class="dt">satEnglishScore =</span> <span class="kw">as.numeric</span>(<span class="st">`</span><span class="dt">ERW</span><span class="st">`</span>),
-         <span class="dt">satMathScore =</span> <span class="kw">as.numeric</span>(<span class="st">`</span><span class="dt">Math</span><span class="st">`</span>)) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">select</span>(school, percentTested, numberTested,
-         satScoreTotal, satEnglishScore, satMathScore) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(school))</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">met_standards &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;met_standards.csv&quot;</span>)
-
-met &lt;-<span class="st"> </span>met_standards <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">district =</span> <span class="st">`</span><span class="dt">District Name</span><span class="st">`</span>,
-         <span class="dt">schoolCode =</span> <span class="st">`</span><span class="dt">School Code</span><span class="st">`</span>,
-         <span class="dt">school =</span> <span class="st">`</span><span class="dt">School Name</span><span class="st">`</span>,
-         <span class="dt">grades =</span> <span class="kw">as.factor</span>(<span class="st">`</span><span class="dt">Grade Span</span><span class="st">`</span>),
-         <span class="dt">hurricaneDays =</span> <span class="kw">as.double</span>(<span class="st">`</span><span class="dt">Missed Days due to Hurricane Florence</span><span class="st">`</span>),
-         <span class="dt">growthType =</span> <span class="kw">as.factor</span>(<span class="st">`</span><span class="dt">School Growth Type</span><span class="st">`</span>),
-         <span class="dt">growthStatus =</span> <span class="kw">as.factor</span>(<span class="st">`</span><span class="dt">School Growth Status</span><span class="st">`</span>),
-         <span class="dt">indexScore =</span> <span class="st">`</span><span class="dt">School Growth Index Score</span><span class="st">`</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">select</span>(district, schoolCode, school, grades, hurricaneDays, 
-         growthType, growthStatus, indexScore)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">act_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;act_data.csv&quot;</span>)</code></pre></div>
-<pre><code>## Parsed with column specification:
-## cols(
-##   `District Name` = col_character(),
-##   `School
-## Code` = col_character(),
-##   `School Name` = col_character(),
-##   `State Board Region` = col_character(),
-##   `Grade Span` = col_character(),
-##   `Missed Days due to Hurricane Florence` = col_double(),
-##   Subgroup = col_character(),
-##   `ACT Subtest or Composite` = col_character(),
-##   `Percent Meeting Benchmark or Standard` = col_character()
-## )</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">act &lt;-<span class="st"> </span>act_data <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">district =</span> <span class="st">`</span><span class="dt">District Name</span><span class="st">`</span>,
-         <span class="dt">schoolCode =</span> <span class="st">`</span><span class="dt">School</span><span class="ch">\r\n</span><span class="dt">Code</span><span class="st">`</span>,
-         <span class="dt">school =</span> <span class="st">`</span><span class="dt">School Name</span><span class="st">`</span>,
-         <span class="dt">region =</span> <span class="kw">as.factor</span>(<span class="st">`</span><span class="dt">State Board Region</span><span class="st">`</span>),
-         <span class="dt">grades =</span> <span class="kw">as.factor</span>(<span class="st">`</span><span class="dt">Grade Span</span><span class="st">`</span>),
-         <span class="dt">hurricaneDays =</span> <span class="kw">as.double</span>(<span class="st">`</span><span class="dt">Missed Days due to Hurricane Florence</span><span class="st">`</span>),
-         <span class="dt">categories =</span> <span class="kw">as.factor</span>(Subgroup),
-         <span class="dt">actType =</span> <span class="kw">as.factor</span>(<span class="st">`</span><span class="dt">ACT Subtest or Composite</span><span class="st">`</span>),
-         <span class="dt">benchmarkPercent =</span> <span class="kw">as.double</span>(<span class="st">`</span><span class="dt">Percent Meeting Benchmark or Standard</span><span class="st">`</span>)) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">select</span>(district, schoolCode, school, region,
-         grades, hurricaneDays, categories, actType, benchmarkPercent)</code></pre></div>
+<p>Below, are just small glimpses of our three datasets we’ll be using: <code>sat</code>, <code>act</code>, and <code>met</code>. We did a lot of wrangling to get the unstructured data to format neatly, and, with more time, will plan to join some of these datasets strategically, since they all share some variable names together.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(knitr)
+<span class="kw">kable</span>(sat <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>(<span class="dv">2</span>))</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">school</th>
+<th align="right">percentTested</th>
+<th align="right">numberTested</th>
+<th align="right">satScoreTotal</th>
+<th align="right">satEnglishScore</th>
+<th align="right">satMathScore</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Alamance-Burlington Middle/Ear</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">Eastern Alamance High</td>
+<td align="right">47.3</td>
+<td align="right">124</td>
+<td align="right">1076</td>
+<td align="right">538</td>
+<td align="right">538</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">kable</span>(act <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>(<span class="dv">2</span>))</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">district</th>
+<th align="left">schoolCode</th>
+<th align="left">school</th>
+<th align="left">region</th>
+<th align="left">grades</th>
+<th align="right">hurricaneDays</th>
+<th align="left">categories</th>
+<th align="left">actType</th>
+<th align="right">benchmarkPercent</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Alamance-Burlington Schools</td>
+<td align="left">010324</td>
+<td align="left">Eastern Alamance High</td>
+<td align="left">Piedmont-Triad</td>
+<td align="left">09-12</td>
+<td align="right">1</td>
+<td align="left">All Students</td>
+<td align="left">ACT composite score of 17 or higher</td>
+<td align="right">51.1</td>
+</tr>
+<tr class="even">
+<td align="left">Alamance-Burlington Schools</td>
+<td align="left">010324</td>
+<td align="left">Eastern Alamance High</td>
+<td align="left">Piedmont-Triad</td>
+<td align="left">09-12</td>
+<td align="right">1</td>
+<td align="left">Female</td>
+<td align="left">ACT composite score of 17 or higher</td>
+<td align="right">57.9</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">kable</span>(met <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>(<span class="dv">2</span>))</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">district</th>
+<th align="left">schoolCode</th>
+<th align="left">school</th>
+<th align="left">grades</th>
+<th align="right">hurricaneDays</th>
+<th align="left">growthType</th>
+<th align="left">growthStatus</th>
+<th align="right">indexScore</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Alamance-Burlington Schools</td>
+<td align="left">010324</td>
+<td align="left">Eastern Alamance High</td>
+<td align="left">09-12</td>
+<td align="right">1</td>
+<td align="left">Overall</td>
+<td align="left">Met</td>
+<td align="right">-1.32</td>
+</tr>
+<tr class="even">
+<td align="left">Alamance-Burlington Schools</td>
+<td align="left">010324</td>
+<td align="left">Eastern Alamance High</td>
+<td align="left">09-12</td>
+<td align="right">1</td>
+<td align="left">Overall</td>
+<td align="left">Not Met</td>
+<td align="right">-3.09</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="data-type" class="section level2">
+<h2>Data Type</h2>
+<p>Here, we laid out the data types for all variables in each dataset:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(knitr)
+<span class="kw">kable</span>(<span class="kw">sapply</span>(sat, typeof), <span class="dt">format =</span> <span class="st">&quot;html&quot;</span>, <span class="dt">col.names =</span> <span class="kw">c</span>(<span class="st">&quot;Type&quot;</span>))</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+Type
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+school
+</td>
+<td style="text-align:left;">
+character
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+percentTested
+</td>
+<td style="text-align:left;">
+double
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+numberTested
+</td>
+<td style="text-align:left;">
+double
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+satScoreTotal
+</td>
+<td style="text-align:left;">
+double
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+satEnglishScore
+</td>
+<td style="text-align:left;">
+double
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+satMathScore
+</td>
+<td style="text-align:left;">
+double
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">kable</span>(<span class="kw">sapply</span>(act, typeof), <span class="dt">format =</span> <span class="st">&quot;html&quot;</span>, <span class="dt">col.names =</span> <span class="kw">c</span>(<span class="st">&quot;Type&quot;</span>))</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+Type
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+district
+</td>
+<td style="text-align:left;">
+character
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+schoolCode
+</td>
+<td style="text-align:left;">
+character
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+school
+</td>
+<td style="text-align:left;">
+character
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+region
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+grades
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+hurricaneDays
+</td>
+<td style="text-align:left;">
+double
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+categories
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+actType
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+benchmarkPercent
+</td>
+<td style="text-align:left;">
+double
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">kable</span>(<span class="kw">sapply</span>(met, typeof), <span class="dt">format =</span> <span class="st">&quot;html&quot;</span>, <span class="dt">col.names =</span> <span class="kw">c</span>(<span class="st">&quot;Type&quot;</span>))</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+Type
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+district
+</td>
+<td style="text-align:left;">
+character
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+schoolCode
+</td>
+<td style="text-align:left;">
+character
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+school
+</td>
+<td style="text-align:left;">
+character
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+grades
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+hurricaneDays
+</td>
+<td style="text-align:left;">
+double
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+growthType
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+growthStatus
+</td>
+<td style="text-align:left;">
+integer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+indexScore
+</td>
+<td style="text-align:left;">
+double
+</td>
+</tr>
+</tbody>
+</table>
 <hr />
 </div>
 </div>
