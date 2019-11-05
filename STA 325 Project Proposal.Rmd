@@ -1,13 +1,18 @@
 ---
-title: "STA 325 Project Proposal"
+title: "North Carolina Education and Duke Students' Impact"
+subtitle: "STA 325 ML and Data Mining Project Proposal"
 author: "Ethan Shen, Steven Herrera, Malavi Ravindran, Austin Jia"
 date: "`r format(Sys.time(), '%B %d %Y')`"
 output: rmdformats::readthedown
 ---
  
+## Packages 
+
 ```{r warning=FALSE, message=FALSE}
 library(tidyverse)
 library(rvest)
+library(knitr)
+library(cowplot)
 ```
 
 ***
@@ -22,17 +27,7 @@ Our objectives are as follow: **(1)** develop a model to understand inference (a
 
 ## High-level Summary of Project Plans
 
-In order to meet our objectives, we will follow these steps:
-
-  1. Complete necessary exploratory data analysis to understand key variables in our model to predict SAT, ACT, and NC school growth index score, each.
- 
-  2. Fit several models, including, but not limited to, linear regression, ridge regression, polynomial regression, and splines.
-  
-  3. Conduct K-fold cross validation and output important values, such as AIC and test MSE, to choose the best model.
-  
-  4. Conclude which model works the best and put together a summary of the findings.
-  
-  5. Finalize thoughts on whether there are statistically significant differences among binary random variables in our dataset (i.e. rural vs. urban, small vs. large school size, etc).
+We will consider developing several models to predict SAT, ACT, and NC school growth index scores, each individually, and try to make sense of what variables that we use to predict these response variables are useful in understanding the expected outcomes. Additionally, we will use traditional methods, such as K-fold cross validation and test MSE to choose the best model. Once we conclude which model works the best, we will finalize our results and work to understand how this fits into the greater context of Duke students in North Carolina.
 
 ## Importance of this Project and Who Can Benefit From This
 
@@ -118,7 +113,6 @@ act <- act_data %>%
 Below, are just small glimpses of our three datasets we'll be using: `sat`, `act`, and `met`. We did a lot of wrangling to get the unstructured data to format neatly, and, with more time, will plan to join some of these datasets strategically, since they all share some variable names together.
 
 ```{r}
-library(knitr)
 kable(sat %>% head(2))
 kable(act %>% head(2))
 kable(met %>% head(2))
@@ -141,15 +135,88 @@ kable(sapply(met, typeof), format = "html", col.names = c("Type"))
 
 ## Inference and Prediction Goals
 
+In order to meet our objectives, we will follow these steps:
 
-## Modeling Strategies
+  1. Complete necessary exploratory data analysis to understand key variables in our model to predict SAT, ACT, and NC school growth index score, each.
+ 
+  2. Fit several models, including, but not limited to, linear regression, ridge regression, polynomial regression, GAM regression, and splines.
+  
+  3. Conduct K-fold cross validation and output important values, such as AIC and test MSE, to choose the best model.
+  
+  4. Conclude which model works the best and put together a summary of the findings.
+  
+  5. Finalize thoughts on whether there are statistically significant differences among binary random variables in our dataset (i.e. rural vs. urban, small vs. large school size, etc).
+  
+In addition to these steps, we've demonstrated a bit of introductory exploratory data analysis:
+
+```{r warning = FALSE}
+title <- ggdraw() + 
+  draw_label("SAT Scores by Total and Type") +
+  theme(plot.margin = margin(0, 0, 0, 7))
+
+b1 <- ggplot(sat, mapping = aes(x = satScoreTotal)) +
+  geom_histogram(bins = 30) +
+  labs(title = "Total SAT Score in NC",
+      x = "SAT Scores")
+b2 <- ggplot(sat, mapping = aes(x = satMathScore)) +
+  geom_histogram(bins = 30) +
+  labs(title = "Math SAT Score in NC",
+      x = "Math Scores")
+b3 <- ggplot(sat, mapping = aes(x = satEnglishScore)) +
+  geom_histogram(bins = 30) +
+  labs(title = "English SAT Score in NC",
+      x = "English Scores")
+
+plot_grid(title, plot_grid(b1, b2, b3),
+          ncol = 1, 
+          rel_heights = c(0.1,1))
+```
+
 
 ```{r}
+act %>%
+  count(actType)
+```
 
+
+```{r warning = FALSE}
+
+title2 <- ggdraw() + 
+  draw_label("ACT Scores by Total and Type") +
+  theme(plot.margin = margin(0, 0, 0, 7))
+
+f1 <- ggplot(act %>% filter(actType == "ACT composite score of 17 or higher"), mapping = aes(x = benchmarkPercent)) +
+  geom_histogram(bins = 30) +
+  labs(title = "ACT composite score")
+f2 <- ggplot(act %>% filter(actType == "ACT English subtest"), mapping = aes(x = benchmarkPercent)) +
+  geom_histogram(bins = 30) +
+  labs(title = "English subtest")
+f3 <- ggplot(act %>% filter(actType == "ACT Math subtest"), mapping = aes(x = benchmarkPercent)) +
+  geom_histogram(bins = 30) +
+  labs(title = "Math Subtest")
+f4 <- ggplot(act %>% filter(actType == "ACT Reading subtest"), mapping = aes(x = benchmarkPercent)) +
+  geom_histogram(bins = 30) +
+  labs(title = "Reading subtest")
+f5 <- ggplot(act %>% filter(actType == "ACT Science subtest"), mapping = aes(x = benchmarkPercent)) +
+  geom_histogram(bins = 30) +
+  labs(title = "Science subtest")
+f6 <- ggplot(act %>% filter(actType == "ACT Writing subtest"), mapping = aes(x = benchmarkPercent)) +
+  geom_histogram(bins = 30) +
+  labs(title = "Writing subtest")
+
+plot_grid(title2, plot_grid(f1, f2, f3, f4, f5, f6),
+          ncol = 1, 
+          rel_heights = c(0.1,1))
 ```
 
 
 
+## Modeling Strategies
+
+Referring back to Step 2, we think testing for all of these types of models are good, especially as we consider interpretation to be super important in our entire analysis. Thus, we eliminated models such as random forest modeling, since they are used more for predictability purposes. 
+
+Once we finalize which models work best, by comparing several things (i.e. how do transformations play into the grander scheme of modeling?), we will use key methods in model selection from our labs, explained in our final section.
+
 ## Selecting Good Model
 
-
+We will use the traditional method of considering K-fold cross validation with several folds, since we can account for that with our large datasets, and compare between the models using AIC and test MSE.
