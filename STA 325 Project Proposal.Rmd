@@ -48,7 +48,7 @@ Although hefty of a goal, we do aim to specify our problem much more as we explo
 
 ## Data Sources
 
-After considering many resources, we decided to reach out to the Carolina Population Center at UNC, in which we expressed our interests in data related to NC. Although we scheduled a meeting with them on November 15, we won't have enough time to fully go over the data sources necessary for the type of research we mentioned above in a timely manner, so we decided to just consider many things and debrief with them our findings. Here is the link for the publicly available data: [NC Public Schools Analysis and Reporting](http://www.ncpublicschools.org/accountability/reporting/)
+After considering many resources, we decided to reach out to the Carolina Population Center at UNC, in which we expressed our interests in data related to NC. Although we scheduled a meeting with them on November 15, we won't have enough time to fully go over the data sources necessary for the type of research we mentioned above in a timely manner, so we decided to just consider many things and debrief with them our findings. Here is the link for the publicly available data: [NC Public Schools Analysis and Reporting](http://www.ncpublicschools.org/accountability/reporting/). We will also be working with data only from the 2018-2019 school year, and, specifically, ACT data from the 2018 11th grade scores and the 2018 SAT scores in NC.
  
 ## Predictors and Response
 
@@ -58,8 +58,52 @@ After considering many resources, we decided to reach out to the Carolina Popula
  
 ## Data Scraping / Wrangling 
 
-```{r}
+```{r warning = FALSE}
+sat_2018 <- read_csv("sat_2018.csv")
 
+sat <- sat_2018 %>%
+  mutate(school = `...2`,
+         percentTested = as.double(`% Tested`),
+         numberTested = as.numeric(`# Tested`),
+         satScoreTotal = as.numeric(`Total`),
+         satEnglishScore = as.numeric(`ERW`),
+         satMathScore = as.numeric(`Math`)) %>%
+  select(school, percentTested, numberTested,
+         satScoreTotal, satEnglishScore, satMathScore) %>%
+  filter(!is.na(school))
+```
+
+```{r warning = FALSE, message = FALSE}
+met_standards <- read_csv("met_standards.csv")
+
+met <- met_standards %>%
+  mutate(district = `District Name`,
+         schoolCode = `School Code`,
+         school = `School Name`,
+         grades = as.factor(`Grade Span`),
+         hurricaneDays = as.double(`Missed Days due to Hurricane Florence`),
+         growthType = as.factor(`School Growth Type`),
+         growthStatus = as.factor(`School Growth Status`),
+         indexScore = `School Growth Index Score`) %>%
+  select(district, schoolCode, school, grades, hurricaneDays, 
+         growthType, growthStatus, indexScore)
+```
+
+```{r warning = FALSE}
+act_data <- read_csv("act_data.csv")
+
+act <- act_data %>%
+  mutate(district = `District Name`,
+         schoolCode = `School\r\nCode`,
+         school = `School Name`,
+         region = as.factor(`State Board Region`),
+         grades = as.factor(`Grade Span`),
+         hurricaneDays = as.double(`Missed Days due to Hurricane Florence`),
+         categories = as.factor(Subgroup),
+         actType = as.factor(`ACT Subtest or Composite`),
+         benchmarkPercent = as.double(`Percent Meeting Benchmark or Standard`)) %>%
+  select(district, schoolCode, school, region,
+         grades, hurricaneDays, categories, actType, benchmarkPercent)
 ```
 
 
