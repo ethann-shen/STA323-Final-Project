@@ -36,9 +36,11 @@ In order to meet our objectives, we will follow these steps:
 
 ## Importance of this Project and Who Can Benefit From This
 
-
+As students that attend a private research university in North Carolina, a state with a rich and long history of putting education first (with key political figures like former Governor and US Senator Terry Sanford) and institutionalizing these accomplishments (with the development of eponymous associations like the Research Triangle), we believe making steps towards understanding the larger sociopolitical nuances of education data research, contextualizing this information, and disseminating it to our peers could make huge strides in contributing to local school district efforts to reach higher educational outcomes. We pride ourselves on being students that care about being leaders of the community, but we often fail to understand where those additional resources need to be allocated or what tangible efforts we can make to close the education gap. Nelson Mandela once said "Education is the most powerful weapon which you can use to change the world." If we can dedicate our knowledge of machine learning and data mining to something as important as education (especially in a state that does so much for us) by investing in our future, then we can begin to have these important conversations about our world's most difficult issues to solve, such as climate change.
 
 ## Other Relevant Information 
+
+Although hefty of a goal, we do aim to specify our problem much more as we explore new relationships in our final presentation. This proposal is created to show what our initial thoughts were and where we can go with this information.
 
 ***
 
