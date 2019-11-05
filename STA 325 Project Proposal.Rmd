@@ -14,13 +14,28 @@ library(rvest)
 
 # Executive Summary
 
+According to US News' Education Rankings, North Carolina ranks **12th** for higher education and **28th** for Pre-K-12 education. These rankings are determined by a number of factors, including data on the percentage of adults with associate degrees or higher, the rates of students completing public 4-year and 2-year college programs, and average tuition for colleges, being some of those factors, while, for K-12 programs, the process of determing ranks is even more complex. Some of these factors include statistics such as high school graduation rate, preschool enrollment, standardized test scores in math and reading, and college readiness based on SAT and ACT scores. While the rankings are flawed with subjective bias, we seek to understand the K-12 education pipeline among several school districts in NC and relationships found among exploring what factors influence the ability to perform well on standardized tests. 
+
 ## Key Project Objectives 
 
+Our objectives are as follow: **(1)** develop a model to understand inference (and prioritize interpretability) among students that score high on the SAT, ACT, and AP exams; **(2)** complete K-fold cross-validation to determine the best model; and **(3)** predict and interpret whether there is a significant difference between binary explanatory variables using bootstrap simulations.
 
 ## High-level Summary of Project Plans
 
+In order to meet our objectives, we will follow these steps:
+
+  1. Complete necessary exploratory data analysis to understand key variables in our model to predict SAT, ACT, and AP exams, each.
+ 
+  2. Fit several models, including, but not limited to, linear regression, ridge regression, polynomial regression, and splines.
+  
+  3. Conduct K-fold cross validation and output important values, such as AIC and test MSE, to choose the best model.
+  
+  4. Conclude which model works the best and put together a summary of the findings.
+  
+  5. Finalize thoughts on whether there are statistically significant differences among binary random variables in our dataset (i.e. rural vs. urban, small vs. large school size, etc).
 
 ## Importance of this Project and Who Can Benefit From This
+
 
 
 ## Other Relevant Information 
@@ -48,6 +63,11 @@ library(rvest)
 
 
 ## Modeling Strategies
+
+```{r}
+
+```
+
 
 
 ## Selecting Good Model

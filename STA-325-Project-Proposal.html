@@ -99,14 +99,14 @@ $(document).ready(function () {
     <h2><a href="#content">STA 325 Project Proposal</a></h2>
     <div id="text-table-of-contents">
       <ul>
-      <li><a href="#project-summary">Project Summary</a><ul>
+      <li><a href="#executive-summary">Executive Summary</a><ul>
       <li><a href="#key-project-objectives">Key Project Objectives</a></li>
-      <li><a href="#project-plans">Project Plans</a></li>
-      <li><a href="#importance-of-this-project">Importance of this Project</a></li>
+      <li><a href="#high-level-summary-of-project-plans">High-level Summary of Project Plans</a></li>
+      <li><a href="#importance-of-this-project-and-who-can-benefit-from-this">Importance of this Project and Who Can Benefit From This</a></li>
       <li><a href="#other-relevant-information">Other Relevant Information</a></li>
       </ul></li>
       <li><a href="#data-description">Data Description</a><ul>
-      <li><a href="#data-source">Data Source</a></li>
+      <li><a href="#data-sources">Data Sources</a></li>
       <li><a href="#predictors-and-response">Predictors and Response</a></li>
       <li><a href="#data-type">Data Type</a></li>
       <li><a href="#data-scraping-wrangling">Data Scraping / Wrangling</a></li>
@@ -123,56 +123,47 @@ $(document).ready(function () {
 <div id="main">
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)
 <span class="kw">library</span>(rvest)</code></pre></div>
-<div id="project-summary" class="section level1">
-<h1>Project Summary</h1>
+<hr />
+<div id="executive-summary" class="section level1">
+<h1>Executive Summary</h1>
+<p>According to US News’ Education Rankings, North Carolina ranks <strong>12th</strong> for higher education and <strong>28th</strong> for Pre-K-12 education. These rankings are determined by a number of factors, including data on the percentage of adults with associate degrees or higher, the rates of students completing public 4-year and 2-year college programs, and average tuition for colleges, being some of those factors, while, for K-12 programs, the process of determing ranks is even more complex. Some of these factors include statistics such as high school graduation rate, preschool enrollment, standardized test scores in math and reading, and college readiness based on SAT and ACT scores. While the rankings are flawed with subjective bias, we seek to understand the K-12 education pipeline among several school districts in NC and relationships found among exploring what factors influence the ability to perform well on standardized tests.</p>
 <div id="key-project-objectives" class="section level2">
 <h2>Key Project Objectives</h2>
+<p>Our objectives are as follow: <strong>(1)</strong> develop a model to understand inference (and prioritize interpretability) among students that score high on the SAT, ACT, and AP exams; <strong>(2)</strong> complete K-fold cross-validation to determine the best model; and <strong>(3)</strong> predict and interpret whether there is a significant difference between binary explanatory variables using bootstrap simulations.</p>
 </div>
-<div id="project-plans" class="section level2">
-<h2>Project Plans</h2>
+<div id="high-level-summary-of-project-plans" class="section level2">
+<h2>High-level Summary of Project Plans</h2>
+<p>In order to meet our objectives, we will follow these steps:</p>
+<ol style="list-style-type: decimal">
+<li><p>Complete necessary exploratory data analysis to understand key variables in our model to predict SAT, ACT, and AP exams, each.</p></li>
+<li><p>Fit several models, including, but not limited to, linear regression, ridge regression, polynomial regression, and splines.</p></li>
+<li><p>Conduct K-fold cross validation and output important values, such as AIC and test MSE, to choose the best model.</p></li>
+<li><p>Conclude which model works the best and put together a summary of the findings.</p></li>
+<li><p>Finalize thoughts on whether there are statistically significant differences among binary random variables in our dataset (i.e. rural vs. urban, small vs. large school size, etc).</p></li>
+</ol>
 </div>
-<div id="importance-of-this-project" class="section level2">
-<h2>Importance of this Project</h2>
+<div id="importance-of-this-project-and-who-can-benefit-from-this" class="section level2">
+<h2>Importance of this Project and Who Can Benefit From This</h2>
 </div>
 <div id="other-relevant-information" class="section level2">
 <h2>Other Relevant Information</h2>
+<hr />
 </div>
 </div>
 <div id="data-description" class="section level1">
 <h1>Data Description</h1>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tweets &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;tweet_global_warming.csv&quot;</span>, <span class="dt">col_names=</span><span class="ot">TRUE</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">select</span>(tweet, existence)
-tweets <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">head</span>(<span class="dv">100</span>)</code></pre></div>
-<pre><code>## # A tibble: 100 x 2
-##    tweet                                                          existence
-##    &lt;chr&gt;                                                          &lt;chr&gt;    
-##  1 Global warming report urges governments to act|BRUSSELS, Belg… Yes      
-##  2 Fighting poverty and global warming in Africa [link]           Yes      
-##  3 Carbon offsets: How a Vatican forest failed to reduce global … Yes      
-##  4 Carbon offsets: How a Vatican forest failed to reduce global … Yes      
-##  5 URUGUAY: Tools Needed for Those Most Vulnerable to Climate Ch… Yes      
-##  6 RT @sejorg: RT @JaymiHeimbuch: Ocean Saltiness Shows Global W… Yes      
-##  7 Global warming evidence all around us|A message to global war… Yes      
-##  8 Migratory Birds' New Climate Change Strategy: Stay Home [link] Yes      
-##  9 Southern Africa: Competing for Limpopo Water: Climate change … Yes      
-## 10 Global warming to impact wheat, rice production in India|Ludh… Yes      
-## # … with 90 more rows</code></pre>
-<div id="data-source" class="section level2">
-<h2>Data Source</h2>
-<p>We got the data from <a href="https://www.figure-eight.com/data-for-everyone/" class="uri">https://www.figure-eight.com/data-for-everyone/</a>.</p>
+<div id="data-sources" class="section level2">
+<h2>Data Sources</h2>
 </div>
 <div id="predictors-and-response" class="section level2">
 <h2>Predictors and Response</h2>
-<p>We will be using the <code>tweet</code> column as our predictor. Our response variable will be <code>existence</code>.</p>
 </div>
 <div id="data-type" class="section level2">
 <h2>Data Type</h2>
-<p><code>tweet</code> is a column that contains various words and is unstructured in the sense that it does not fall into a specific variable category (it’s not continuous or discrete). <code>existence</code> is a nominal categorical variable.</p>
 </div>
 <div id="data-scraping-wrangling" class="section level2">
 <h2>Data Scraping / Wrangling</h2>
-<p>We will be using various NLP techniques to transform the <code>tweet</code> column, such as determining word frequency (how often a word appears in these tweets), word length, lexical diversity (the number of unique words used in a tweet), and lexical density (the number of unique words divided by the total number of words for each tweet).</p>
+<hr />
 </div>
 </div>
 <div id="project-roadmap" class="section level1">
@@ -194,7 +185,7 @@ tweets <span class="op">%&gt;%</span>
 
 <div id="postamble" data-toggle="wy-nav-shift" class="status">
 <p class="author"><span class="glyphicon glyphicon-user"></span> Ethan Shen, Steven Herrera, Malavi Ravindran, Austin Jia</p>
-<p class="date"><span class="glyphicon glyphicon-calendar"></span> October 10 2019</p>
+<p class="date"><span class="glyphicon glyphicon-calendar"></span> November 05 2019</p>
 </div>
 
 
