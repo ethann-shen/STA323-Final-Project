@@ -48,6 +48,7 @@ Although hefty of a goal, we do aim to specify our problem much more as we explo
 
 ## Data Sources
 
+After considering many resources, we decided to reach out to the Carolina Population Center at UNC, in which we expressed our interests in data related to NC. Although we scheduled a meeting with them on November 15, we won't have enough time to fully go over the data sources necessary for the type of research we mentioned above in a timely manner, so we decided to just consider many things and debrief with them our findings. Here is the link for the publicly available data: [NC Public Schools Analysis and Reporting](http://www.ncpublicschools.org/accountability/reporting/)
  
 ## Predictors and Response
 
@@ -56,6 +57,11 @@ Although hefty of a goal, we do aim to specify our problem much more as we explo
 
  
 ## Data Scraping / Wrangling 
+
+```{r}
+
+```
+
 
 *** 
 
