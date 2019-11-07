@@ -1,0 +1,26 @@
+---
+title: "Untitled"
+author: "Ethan Shen"
+date: "11/6/2019"
+output: html_document
+---
+
+```{r}
+met_standards
+
+```
+
+```{r}
+act
+inner_join(met_standards, act, by = c("Subgroup" = "categories", "School Code" = "schoolCode", "School Name" = "school", "District Name" = "district", "Grade Span" = "grades")) %>%
+  select("State Board Region", "Grade Span", "School Growth Status", "School Growth Index Score", "benchmarkPercent", "Subgroup", "School Name") %>%
+  select("School Growth Status", everything()) %>%
+  inner_join(sat, by = c("School Name" = "school"))
+```
+
+```{r}
+df <- read_csv("asdf.csv")
+
+df
+```
+
