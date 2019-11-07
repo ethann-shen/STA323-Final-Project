@@ -9,14 +9,9 @@ output: html_document
 met_standards
 library(tidyverse)
 ```
+df <- read.csv("asdf.csv")
 
-```{r}
-act
-inner_join(met_standards, act, by = c("Subgroup" = "categories", "School Code" = "schoolCode", "School Name" = "school", "District Name" = "district", "Grade Span" = "grades")) %>%
-  select("State Board Region", "Grade Span", "School Growth Status", "School Growth Index Score", "benchmarkPercent", "Subgroup", "School Name") %>%
-  select("School Growth Status", everything()) %>%
-  inner_join(sat, by = c("School Name" = "school"))
-```
+
 
 ```{r}
 df <- read.csv("asdf.csv")
@@ -121,3 +116,23 @@ d5 <- d4 %>% mutate(diff = a - b)
 
 
 aw;efguhwelsiefuh
+
+df <- df %>%
+filter(!is.na(grade_span),
+       grade_span == "09-12", subject == "ACT" |
+         subject == "ACTEN" |subject == "ACTMA" | subject == "ACTRD" | subject == "ACTSC" |subject == "ACTWR")
+
+df
+
+reshape(df, idvar = "school_name", timevar = "subgroup", direction = "wide")
+```
+
+Response: Growth score
+
+Covariates
+- Region (sbe_region)
+- title 1 status
+- Missed Days (?)
+- School Size
+- Percentage Subgroup
+- Percent ACT score met standard
