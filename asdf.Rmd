@@ -6,9 +6,116 @@ output: html_document
 ---
 
 ```{r}
+met_standards
+library(tidyverse)
+```
 df <- read.csv("asdf.csv")
 
 
+
+```{r}
+df <- read.csv("asdf.csv")
+
+df <- df %>%
+  filter(!is.na(grade_span),
+         grade_span == "09-12") 
+
+
+a <- df %>%
+filter(subject == "ACT" |  
+       subject == "ACTEN" |  subject == "ACTMA" | subject == "ACTRD" | subject == "ACTSC" |  subject == "ACTWR") 
+
+
+a[, ] <- lapply(a[, ], as.character)
+a %>%
+  filter(school_name == "Eastern Alamance High", subject == "ACT") %>%
+  spread(key = "school_name", value = "den") %>%
+  select(school_code, subgroup, subject, "Eastern Alamance High")
+b <- a  %>%
+  spread(key = "subgroup", value = "total_pct") 
+
+
+lm(lea_code ~ as.numeric(AIG), data = b)
+
+test.df <- data.frame()
+try=function(oneSchoolInfo) {
+
+  total_number <- oneSchoolInfo %>%
+     filter(
+            subgroup == "ALL") %>%
+     select(den)
+   percent_female <- oneSchoolInfo %>%
+     filter(
+            subgroup == "FEM") %>%
+     select(den)
+   percent_female = percent_female/total_number
+   dat = data.frame(total = total_number, percent_fem = percent_female)
+   return(rbind(test.df, dat))
+}
+
+try(test)
+```
+```{r}
+for (one in names) {
+  total_number <- test %>%
+     filter(school_name == one,
+            subgroup == "ALL") %>%
+     select(den)
+   percent_female <- test %>%
+     filter(school_name == one,
+            subgroup == "FEM") %>%
+     select(den)
+   percent_female = percent_female/total_number
+   l = data.frame(schooltotal = total_number, percent_fem = percent_female)
+   return(l)
+}
+
+try(test)
+
+df_just_act <- df %>%
+  filter(subject == "ACT")
+df_just_act
+
+test <- df_just_act %>%
+  filter(school_name == 'Eastern Alamance High' | school_name == "Graham High")
+
+test[, ] <- lapply(test[, ], as.character)
+
+names <- unique(test$school_name)  
+
+o <- data.frame()
+for (one in names) {
+  ALL <- test %>%
+     filter(school_name == one,
+            subgroup == "ALL") 
+  total_number = ALL$den
+  
+   FEM <- test %>%
+     filter(school_name == one,
+            subgroup == "FEM")
+   
+   fem_number = FEM$den
+   percent_female = fem_number/total_number
+   
+   df = data.frame(school_name = one, total_number = total_number, percent_female = percent_female)
+   o <- rbind(o, df)
+  
+}
+```
+
+
+```{r}
+d <- tibble(hits = 1, runs = 2, o_hits = 5, o_runs = 9)
+d2 <- d %>% gather(key = "col_name", value = "value", everything())
+d3 <- d2 %>% separate(col_name, into = c("team", "metric"), sep = "_", fill = "left")
+d3$team <- ifelse(is.na(d3$team), "a", "b")
+d4 <- d3 %>% group_by(metric) %>% spread(key = "team", value = "value")
+d5 <- d4 %>% mutate(diff = a - b)
+```
+
+
+
+aw;efguhwelsiefuh
 
 df <- df %>%
 filter(!is.na(grade_span),
