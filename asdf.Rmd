@@ -115,8 +115,8 @@ d5 <- d4 %>% mutate(diff = a - b)
 
 
 
-aw;efguhwelsiefuh
-
+### Each row is a school here  
+```{r}
 df <- df %>%
 filter(!is.na(grade_span),
        grade_span == "09-12", subject == "ACT" |
@@ -126,6 +126,7 @@ df
 
 reshape(df, idvar = "school_name", timevar = "subgroup", direction = "wide")
 ```
+
 
 Response: Growth score
 
