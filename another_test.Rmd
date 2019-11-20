@@ -1,0 +1,20 @@
+---
+title: "another test"
+author: "Ethan Shen"
+date: "11/20/2019"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+df <- read.csv("asdf.csv")
+
+df <- df %>%
+  filter(!is.na(grade_span),
+         grade_span == "09-12") 
+reshape(df, idvar = "school_name", timevar = "subgroup", direction = "wide")
+
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
