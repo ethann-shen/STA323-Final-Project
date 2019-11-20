@@ -75,6 +75,8 @@ sat <- sat_2018 %>%
   select(school, percentTested, numberTested,
          satScoreTotal, satEnglishScore, satMathScore) %>%
   filter(!is.na(school))
+
+View(sat)
 ```
 
 ```{r warning = FALSE, message = FALSE, echo = FALSE}
@@ -91,6 +93,8 @@ met <- met_standards %>%
          indexScore = `School Growth Index Score`) %>%
   select(district, schoolCode, school, grades, hurricaneDays, 
          growthType, growthStatus, indexScore)
+
+View(met_standards)
 ```
 
 ```{r warning = FALSE, message = FALSE, echo = FALSE}
@@ -108,6 +112,8 @@ act <- act_data %>%
          benchmarkPercent = as.double(`Percent Meeting Benchmark or Standard`)) %>%
   select(district, schoolCode, school, region,
          grades, hurricaneDays, categories, actType, benchmarkPercent)
+
+View(act)
 ```
 
 Below, are just small glimpses of our three datasets we'll be using: `sat`, `act`, and `met`. We did a lot of wrangling to get the unstructured data to format neatly, and, with more time, will plan to join some of these datasets strategically, since they all share some variable names together.
