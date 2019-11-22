@@ -12,9 +12,14 @@ df <- read.csv("asdf.csv")
 df <- df %>%
   filter(!is.na(grade_span),
          grade_span == "09-12") 
-reshape(df, idvar = "school_name", timevar = "subgroup", direction = "wide")
+#reshape(df, idvar = "school_name", timevar = "subgroup", direction = "wide")
+
+slhs <- df %>%
+  filter(school_name == "Southern Lee High School",
+         subject == "ACT") 
 
 
+slhs
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
