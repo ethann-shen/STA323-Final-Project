@@ -6,7 +6,13 @@ output: html_document
 ---
 
 ```{r}
-school_df_final <- read_csv("school_df_final.csv")
+library(tidyverse)
+library(ggplot2)
+require(caTools) 
+```
+
+```{r}
+school_df_final <- read.csv("school_df_final.csv")
 ```
 
 
@@ -32,6 +38,20 @@ avg %>%
 ```
 
 ### Modeling 
+
+```{r}
+#splitting data into training and testing
+
+set.seed(123)   #  set seed to ensure you always have same random numbers generated
+rows <- sample(nrow(school_df_final))
+school_df_final <- school_df_final[rows, ]
+sample = sample.split(school_df_final,SplitRatio = 0.75) # splits the data in the ratio mentioned in SplitRatio. After splitting marks these rows as logical TRUE and the the remaining are marked as logical FALSE
+training =subset(school_df_final,sample ==TRUE) # creates a training dataset named train1 with rows which are marked as TRUE
+testing=subset(school_df_final, sample==FALSE)
+```
+
+
+
 ```{r}
 # should we mean center percents? 
 model1 = lm(data = final_school_data_imp, growth_index_score ~ .- growth_status - school_code - school_name)
