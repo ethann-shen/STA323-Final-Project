@@ -66,7 +66,7 @@ Covariates
 
 - Percent ACT score met standard
 
-```{R}
+```{r}
 ACT <- school_data %>%
   filter(subject == "ACT") 
 
@@ -78,6 +78,8 @@ title_1.df <- ACT %>%
   distinct(school_code, school_name, title_1) 
 
 title_1.df[] <- lapply(title_1.df, function(x) if(is.factor(x)) as.character(x) else x)
+
+```
 
 
 ```{r}
