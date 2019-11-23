@@ -121,7 +121,7 @@ for (code in school.codes){
   }
   
   temp.df = data.frame(school_code = code, school_name = sname, 
-                       percent_white = percent_white, percent_passed = ALL$total_pct)
+                       percent_white = percent_white)
   racedata <- rbind(racedata, temp.df)
   racedata[] <- lapply(racedata, function(x) if(is.factor(x)) as.character(x) else x)
 }
