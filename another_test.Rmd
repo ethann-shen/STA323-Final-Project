@@ -65,6 +65,8 @@ Covariates
 - Percentage Subgroup
 
 - Percent ACT score met standard
+
+```{R}
 ACT <- school_data %>%
   filter(subject == "ACT") 
 
