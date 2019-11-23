@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r}
-library(tidyverse)
+library(tidyverse) 
 ```
 
 ```{r}
@@ -34,20 +34,17 @@ SCHOOLINFO <- SCHOOLINFO %>%
 ```{r}
 school_data <- read.csv("school_data.csv")
 
-<<<<<<< HEAD
 df_1 <- df %>%
   filter(!is.na(grade_span),
          grade_span == "09-12") %>%
   select(school_code, school_name, sbe_region, title_1, missed_days, subgroup, subject, den, total_pct, grade_span)
-=======
+
 school_data <- school_data %>%
   filter(!is.na(grade_span),
          grade_span == "09-12") 
->>>>>>> 2508052e831c24d2c61e079cafb59d74e415d010
 
 df_2 <- reshape(df_1, idvar = "school_name", timevar = "subgroup", direction = "wide")
 
-<<<<<<< HEAD
 df_2
 
 df_2$sbe
@@ -66,7 +63,6 @@ Covariates
 - Percentage Subgroup
 
 - Percent ACT score met standard
-=======
 ACT <- school_data %>%
   filter(subject == "ACT") 
 
@@ -286,10 +282,10 @@ for (code in school.codes){
 ```
 
 
-```{r warning = FALSE}
+```{r, warning = FALSE}
 race.gender <- merge(racedata, genderdata, by = c("school_code", "school_name"), all = TRUE) 
 race.gender.ed <- merge(race.gender, ed.data, by = c("school_code", "school_name"), all = TRUE) # %>%
-# filter(is.na(percent_white) | is.na(percent_male) | is.na(percent_eds))
+#filter(is.na(percent_white) | is.na(percent_male) | is.na(percent_eds))
 
 race.gender.ed.disability <- merge(race.gender.ed, disability.data, by = c("school_code", "school_name"), all = TRUE)
 
@@ -339,6 +335,3 @@ avg %>%
   spread(region, mean_percent_white)
 ```
 
-
-
->>>>>>> 2508052e831c24d2c61e079cafb59d74e415d010
