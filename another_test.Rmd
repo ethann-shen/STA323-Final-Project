@@ -5,8 +5,23 @@ date: "11/20/2019"
 output: html_document
 ---
 
+```{r, echo = FALSE, include = FALSE}
+# Installing packages
+pkgTest <- function(x) {
+  if (!require(x,character.only = TRUE)) {
+    install.packages(x,dep=TRUE)
+  }
+}
+pkgs <- c("tidyverse")
+
+for (pkg in pkgs) {
+  pkgTest(pkg)
+}
+```
+
 ```{r}
 library(tidyverse) 
+library(mice)
 ```
 
 ```{r}
