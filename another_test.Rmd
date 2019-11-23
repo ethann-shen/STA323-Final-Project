@@ -5,8 +5,23 @@ date: "11/20/2019"
 output: html_document
 ---
 
+```{r, echo = FALSE, include = FALSE}
+# Installing packages
+pkgTest <- function(x) {
+  if (!require(x,character.only = TRUE)) {
+    install.packages(x,dep=TRUE)
+  }
+}
+pkgs <- c("tidyverse")
+
+for (pkg in pkgs) {
+  pkgTest(pkg)
+}
+```
+
 ```{r}
-library(tidyverse)
+library(tidyverse) 
+library(mice)
 ```
 
 ```{r}
@@ -34,11 +49,24 @@ SCHOOLINFO <- SCHOOLINFO %>%
 ```{r}
 school_data <- read.csv("school_data.csv")
 
+
 school_data <- school_data %>%
   filter(!is.na(grade_span),
          grade_span == "09-12") 
+```
 
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
+Covariates
+- Region (sbe_region)
+- title 1 status
+- Missed Days (?)
+- Class Size
+- Percentage Subgroup
+
+- Percent ACT score met standard
+
+```{R}
 ACT <- school_data %>%
   filter(subject == "ACT") 
 
@@ -50,7 +78,7 @@ title_1.df <- ACT %>%
   distinct(school_code, school_name, title_1) 
 
 title_1.df[] <- lapply(title_1.df, function(x) if(is.factor(x)) as.character(x) else x)
-```
+
 
 ```{r}
 #FOR RACE
@@ -258,10 +286,10 @@ for (code in school.codes){
 ```
 
 
-```{r warning = FALSE}
+```{r, warning = FALSE}
 race.gender <- merge(racedata, genderdata, by = c("school_code", "school_name"), all = TRUE) 
 race.gender.ed <- merge(race.gender, ed.data, by = c("school_code", "school_name"), all = TRUE) # %>%
-# filter(is.na(percent_white) | is.na(percent_male) | is.na(percent_eds))
+#filter(is.na(percent_white) | is.na(percent_male) | is.na(percent_eds))
 
 race.gender.ed.disability <- merge(race.gender.ed, disability.data, by = c("school_code", "school_name"), all = TRUE)
 
@@ -311,6 +339,4 @@ avg %>%
   filter(!is.na(region)) %>%
   spread(region, mean_percent_white)
 ```
-
-
 
