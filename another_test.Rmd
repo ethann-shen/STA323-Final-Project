@@ -348,6 +348,14 @@ final_school_data <- final_school_data %>%
   mutate(title_1 = case_when(
     title_1 == "" ~ "N",
     TRUE ~ as.character(title_1)),
+    
+    percent_ACT_meeting = gsub("[\\<\\>]", "", percent_ACT_meeting),
+    percent_ACTEN_meeting = gsub("[\\<\\>]", "", percent_ACTEN_meeting),
+    percent_ACTMA_meeting = gsub("[\\<\\>]", "", percent_ACTMA_meeting),
+    percent_ACTRD_meeting = gsub("[\\<\\>]", "", percent_ACTRD_meeting),
+    percent_ACTSC_meeting = gsub("[\\<\\>]", "", percent_ACTSC_meeting),
+    percent_ACTWR_meeting = gsub("[\\<\\>]", "", percent_ACTWR_meeting),
+    
     percent_ACT_meeting = as.numeric(percent_ACT_meeting),
     percent_ACTEN_meeting = as.numeric(percent_ACTEN_meeting),
     percent_ACTMA_meeting = as.numeric(percent_ACTMA_meeting),
@@ -380,7 +388,9 @@ ggplot(missing.prop, aes(x = reorder(var, -prop), y = prop)) +
 sum(is.na(final_school_data))/(dim(final_school_data)[1] * dim(final_school_data)[2])
 
 final_school_data_imp <- parlmice(final_school_data, m=5, printFlag=FALSE, maxit = 5, 
-                cluster.seed=123, n.code = 2, cl.type = "FORK") 
+                                  cluster.seed=123, n.code = 2, cl.type = "FORK") 
+
+someclownshit <- final_school_data_imp$data
 ```
 
 We only have 390 complete cases. With such a limited sample size, we cannot afford to do complete case analysis. We do multiple imputation to handle missing data. 
@@ -400,7 +410,7 @@ avg <- final_school_data %>%
          mean_percent_male = mean(percent_male, na.rm=TRUE),
          mean_percent_eds = mean(percent_eds, na.rm=TRUE),
          mean_percent_swd = mean(percent_swd, na.rm=TRUE))
- 
+
 avg %>%
   distinct(region, mean_percent_white) %>%
   filter(!is.na(region)) %>%
