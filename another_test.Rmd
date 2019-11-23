@@ -49,23 +49,10 @@ SCHOOLINFO <- SCHOOLINFO %>%
 ```{r}
 school_data <- read.csv("school_data.csv")
 
-df_1 <- df %>%
-  filter(!is.na(grade_span),
-         grade_span == "09-12") %>%
-  select(school_code, school_name, sbe_region, title_1, missed_days, subgroup, subject, den, total_pct, grade_span)
 
 school_data <- school_data %>%
   filter(!is.na(grade_span),
          grade_span == "09-12") 
-
-df_2 <- reshape(df_1, idvar = "school_name", timevar = "subgroup", direction = "wide")
-
-df_2
-
-df_2$sbe
-
-colnames(df_2)
-colnames(df)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
