@@ -289,7 +289,7 @@ for (code in school.codes){
 ```{r, warning = FALSE}
 race.gender <- merge(racedata, genderdata, by = c("school_code", "school_name"), all = TRUE) 
 race.gender.ed <- merge(race.gender, ed.data, by = c("school_code", "school_name"), all = TRUE) # %>%
-#filter(is.na(percent_white) | is.na(percent_male) | is.na(percent_eds))
+#filter(is.na(percent_white) | is.na(percent_male) | is.na(percent_eds)) 
 
 race.gender.ed.disability <- merge(race.gender.ed, disability.data, by = c("school_code", "school_name"), all = TRUE)
 
