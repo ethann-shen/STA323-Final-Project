@@ -1,0 +1,43 @@
+---
+title: "Project Modeling"
+author: "Ethan Shen, Steven Herrera, Malavi Ravindran, Austin Jia"
+date: "11/23/2019"
+output: html_document
+---
+
+```{r}
+school_df_final <- read_csv("school_df_final.csv")
+```
+
+
+
+### Visualizations
+```{r}
+ggplot(data = final_school_data %>% filter(!is.na(region)), aes(x = percent_white)) + 
+  geom_histogram() + 
+  facet_wrap(~region)
+```
+
+```{r}
+avg <- final_school_data %>%
+  group_by(region) %>%
+  mutate(mean_percent_white = mean(percent_white, na.rm=TRUE),
+         mean_percent_male = mean(percent_male, na.rm=TRUE),
+         mean_percent_eds = mean(percent_eds, na.rm=TRUE),
+         mean_percent_swd = mean(percent_swd, na.rm=TRUE))
+avg %>%
+  distinct(region, mean_percent_white) %>%
+  filter(!is.na(region)) %>%
+  spread(region, mean_percent_white)
+```
+
+### Modeling 
+```{r}
+# should we mean center percents? 
+model1 = lm(data = final_school_data_imp, growth_index_score ~ .- growth_status - school_code - school_name)
+
+summary(model1)
+
+
+summary(final_school_data$growth_index_score)
+```
