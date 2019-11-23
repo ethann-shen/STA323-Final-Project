@@ -5,6 +5,17 @@ date: "11/20/2019"
 output: html_document
 ---
 
+Assumptions: 
+
+1. <5% or >95% meet benchmark, those just become 5 and 95% respectively
+2. if a school doens't include data about white, 1 - black and hispanic = white 
+3. junior class demographic is represntative of school (ACT)
+4. work key is senior class demographic, also representative 
+5. not assuming a gender binary 
+6. percent met are based on subject composite score 
+
+
+
 ```{r, echo = FALSE, include = FALSE}
 # Installing packages
 pkgTest <- function(x) {
