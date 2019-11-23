@@ -431,10 +431,9 @@ avg %>%
 ### Modeling 
 ```{r}
 # should we mean center percents? 
-model1 = lm(data = final_school_data_imp, growth_index_score ~ .- growth_status - school_code - school_name)
+model1 = lm(data = someclownshit, growth_index_score ~ .- growth_status - school_code - school_name)
 
 summary(model1)
 
-
-summary(final_school_data$growth_index_score)
+plot(model1)
 ```
