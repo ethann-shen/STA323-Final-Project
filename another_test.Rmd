@@ -387,7 +387,7 @@ We only have 390 complete cases. With such a limited sample size, we cannot affo
 
 
 ### Visualizations
-```{r}
+```{r} 
 ggplot(data = final_school_data %>% filter(!is.na(region)), aes(x = percent_white)) + 
   geom_histogram() + 
   facet_wrap(~region)
