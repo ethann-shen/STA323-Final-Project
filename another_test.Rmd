@@ -180,14 +180,14 @@ for (code in school.codes){
     
   }
   
-  else if (gender$subgroup == "NEDS") {
+  else if (economic.status$subgroup == "NEDS") {
     fem_number = economic.status$den
     percent_neds = percent_neds/total_number
     percent_male = 1 - percent_neds
     
   }
   
-  else if (gender$subgroup == "EDS") {
+  else if (economic.status$subgroup == "EDS") {
     eds_number = economic.status$den
     percent_eds = eds_number/total_number
     
@@ -232,14 +232,14 @@ for (code in school.codes){
     
   }
   
-  else if (gender$subgroup == "NSWD") {
+  else if (disability.status$subgroup == "NSWD") {
     nswd_number = disability.status$den
     percent_nswd = nswd_number/total_number
     percent_swd = 1 - percent_nswd
     
   }
   
-  else if (gender$subgroup == "SWD") {
+  else if (disability.status$subgroup == "SWD") {
     swd_number = disability.status$den
     percent_swd = swd_number/total_number
     
@@ -279,7 +279,37 @@ final_school_data <- final_school_data %>%
     title_1 == "" ~ "N",
     TRUE ~ as.character(title_1)),
     percent_meeting = as.numeric(percent_meeting))
-    
 ```
+
+```{r}
+# should we mean center percents? 
+model1 = lm(data = final_school_data, growth_index_score ~ .- growth_status - school_code - school_name)
+
+summary(model1)
+
+
+summary(final_school_data$growth_index_score)
+```
+
+```{r}
+ggplot(data = final_school_data %>% filter(!is.na(region)), aes(x = percent_white)) + 
+  geom_histogram() + 
+  facet_wrap(~region)
+```
+
+```{r}
+avg <- final_school_data %>%
+  group_by(region) %>%
+  mutate(mean_percent_white = mean(percent_white, na.rm=TRUE),
+         mean_percent_male = mean(percent_male, na.rm=TRUE),
+         mean_percent_eds = mean(percent_eds, na.rm=TRUE),
+         mean_percent_swd = mean(percent_swd, na.rm=TRUE))
+
+avg %>%
+  distinct(region, mean_percent_white) %>%
+  filter(!is.na(region)) %>%
+  spread(region, mean_percent_white)
+```
+
 
 
