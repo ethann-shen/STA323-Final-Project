@@ -7,15 +7,47 @@ output: html_document
 
 ```{r}
 library(tidyverse)
-df <- read.csv("asdf.csv")
+```
 
+```{r}
+metStandards <- read.csv("met_standards.csv")
+metStandards <- metStandards %>%
+  filter(Subgroup == "All Students", Grade.Span == "09-12") %>%
+  select(School.Name, State.Board.Region, School.Growth.Status, School.Growth.Index.Score)
+metStandards[] <- lapply(metStandards, function(x) if(is.factor(x)) as.character(x) else x)
+
+act <- read.csv("act_data.csv")
+act <- act %>%
+  filter(Subgroup == "All Students", Grade.Span == "09-12", ACT.Subtest.or.Composite == "ACT composite score of 17 or higher") %>%
+  select(School.Name, School.Code, Percent.Meeting.Benchmark.or.Standard, Missed.Days.due.to.Hurricane.Florence)
+act[] <- lapply(act, function(x) if(is.factor(x)) as.character(x) else x)
+
+SCHOOLINFO <- inner_join(act, metStandards, by = "School.Name")
+SCHOOLINFO[] <- lapply(SCHOOLINFO, function(x) if(is.factor(x)) as.character(x) else x)
+
+SCHOOLINFO <- SCHOOLINFO %>%
+  rename(school_name = School.Name,
+         school_code = School.Code)
+```
+
+
+```{r}
+school_data <- read.csv("school_data.csv")
+
+<<<<<<< HEAD
 df_1 <- df %>%
   filter(!is.na(grade_span),
          grade_span == "09-12") %>%
   select(school_code, school_name, sbe_region, title_1, missed_days, subgroup, subject, den, total_pct, grade_span)
+=======
+school_data <- school_data %>%
+  filter(!is.na(grade_span),
+         grade_span == "09-12") 
+>>>>>>> 2508052e831c24d2c61e079cafb59d74e415d010
 
 df_2 <- reshape(df_1, idvar = "school_name", timevar = "subgroup", direction = "wide")
 
+<<<<<<< HEAD
 df_2
 
 df_2$sbe
@@ -34,3 +66,279 @@ Covariates
 - Percentage Subgroup
 
 - Percent ACT score met standard
+=======
+ACT <- school_data %>%
+  filter(subject == "ACT") 
+
+ACT <- ACT %>%
+  filter(school_name != "Dare Learning Academy")
+
+# Title 1 Status
+title_1.df <- ACT %>%
+  distinct(school_code, school_name, title_1) 
+
+title_1.df[] <- lapply(title_1.df, function(x) if(is.factor(x)) as.character(x) else x)
+```
+
+```{r}
+#FOR RACE
+school.codes <- unique(ACT$school_code)
+
+racedata <- data.frame()
+for (code in school.codes){
+  
+  filteredForCode <- ACT %>%
+    filter(school_code == code)
+  
+  ALL <- filteredForCode %>%
+    filter(subgroup == "ALL")
+  
+  total_number = ALL$den
+  sname = ALL$school_name
+  
+  raceWhite <- filteredForCode %>%
+    filter(subgroup == "WHTE")
+  raceHispanic <- filteredForCode %>%
+    filter(subgroup == "HISP")
+  raceBlack <- filteredForCode %>%
+    filter(subgroup == "BLCK")
+  
+  if (nrow(raceWhite) == 1){
+    white_number = raceWhite$den
+    percent_white = white_number/total_number
+  }
+  else if (nrow(raceWhite) == 0 && nrow(raceHispanic) == 1 && nrow(raceBlack) == 1){
+    hispanic_number = raceHispanic$den
+    black_number = raceBlack$den
+    minority_number = hispanic_number + black_number
+    percent_white = 1 - (minority_number/total_number)
+    
+  }
+  else if (nrow(raceWhite) == 0 && nrow(raceHispanic) == 0 && nrow(raceBlack) == 1){
+    black_number = raceBlack$den
+    percent_white = 1 - (black_number/total_number)
+    
+  }
+  
+  temp.df = data.frame(school_code = code, school_name = sname, 
+                       percent_white = percent_white)
+  racedata <- rbind(racedata, temp.df)
+  racedata[] <- lapply(racedata, function(x) if(is.factor(x)) as.character(x) else x)
+}
+```
+
+```{r}
+#GENDER
+names <- unique(ACT$school_code)
+genderdata <- data.frame()
+for (code in school.codes){
+  ALL <- ACT %>%
+    filter(school_code == code,
+           subgroup == "ALL")
+  sname = ALL$school_name
+  total_number = ALL$den
+  
+  #computing stuff for gender
+  
+  gender <- ACT %>%
+    filter(school_code == code,
+           subgroup == "MALE" | subgroup == "FEM")
+  
+  if (nrow(gender) == 0){
+    next
+  }
+  if (nrow(gender) == 2){
+    maleInfo <- gender %>%
+      filter(subgroup == "MALE")
+    
+    male_number = maleInfo$den
+    percent_male = male_number/total_number
+    
+  }
+  else if (gender$subgroup == "FEM") {
+    fem_number = gender$den
+    percent_female = fem_number/total_number
+    percent_male = 1 - percent_female
+    
+  }
+  
+  else if (gender$subgroup == "MALE") {
+    male_number = gender$den
+    percent_male = male_number/total_number
+    
+  }
+  else{
+    next 
+  }
+  
+  temp.df2 = data.frame(school_code = code, school_name = sname, 
+                        percent_male = percent_male)
+  genderdata <- rbind(genderdata, temp.df2)
+  genderdata[] <- lapply(genderdata, function(x) if(is.factor(x)) as.character(x) else x)
+}
+```
+
+```{r}
+# Economically Disadvantaged
+ed.data <- data.frame()
+for (code in school.codes){
+  
+  filteredForCode <- ACT %>%
+    filter(school_code == code)
+  
+  ALL <- filteredForCode %>%
+    filter(subgroup == "ALL")
+  
+  total_number = ALL$den
+  sname = ALL$school_name
+  
+  economic.status <- filteredForCode %>%
+    filter(subgroup == "EDS" | subgroup == "NEDS")
+  
+  if (nrow(economic.status) == 0){
+    next
+  }
+  
+  if (nrow(economic.status) == 2){
+    disadvantaged <- economic.status %>%
+      filter(subgroup == "EDS")
+    
+    eds_number = disadvantaged$den
+    percent_eds = eds_number/total_number
+    
+  }
+  
+  else if (economic.status$subgroup == "NEDS") {
+    fem_number = economic.status$den
+    percent_neds = percent_neds/total_number
+    percent_male = 1 - percent_neds
+    
+  }
+  
+  else if (economic.status$subgroup == "EDS") {
+    eds_number = economic.status$den
+    percent_eds = eds_number/total_number
+    
+  }
+  else{
+    next 
+  }
+  
+  temp.df3 = data.frame(school_code = code, school_name = sname, 
+                        percent_eds = percent_eds)
+  ed.data <- rbind(ed.data, temp.df3)
+  ed.data[] <- lapply(ed.data, function(x) if(is.factor(x)) as.character(x) else x)
+}
+```
+
+```{r}
+# Disabilities 
+disability.data <- data.frame()
+for (code in school.codes){
+  
+  filteredForCode <- ACT %>%
+    filter(school_code == code)
+  
+  ALL <- filteredForCode %>%
+    filter(subgroup == "ALL")
+  
+  total_number = ALL$den
+  sname = ALL$school_name
+  
+  disability.status <- filteredForCode %>%
+    filter(subgroup == "SWD" | subgroup == "NSWD")
+  
+  if (nrow(disability.status) == 0){
+    next
+  }
+  
+  if (nrow(disability.status) == 2){
+    disability <- disability.status %>%
+      filter(subgroup == "SWD")
+    swd_number = disability$den
+    percent_swd = swd_number/total_number
+    
+  }
+  
+  else if (disability.status$subgroup == "NSWD") {
+    nswd_number = disability.status$den
+    percent_nswd = nswd_number/total_number
+    percent_swd = 1 - percent_nswd
+    
+  }
+  
+  else if (disability.status$subgroup == "SWD") {
+    swd_number = disability.status$den
+    percent_swd = swd_number/total_number
+    
+  }
+  else{
+    next 
+  }
+  
+  temp.df4 = data.frame(school_code = code, 
+                        school_name = sname, 
+                        percent_swd = percent_swd)
+  
+  disability.data <- rbind(disability.data, temp.df4)
+  disability.data[] <- lapply(disability.data, function(x) if(is.factor(x)) as.character(x) else x)
+}
+```
+
+
+```{r warning = FALSE}
+race.gender <- merge(racedata, genderdata, by = c("school_code", "school_name"), all = TRUE) 
+race.gender.ed <- merge(race.gender, ed.data, by = c("school_code", "school_name"), all = TRUE) # %>%
+# filter(is.na(percent_white) | is.na(percent_male) | is.na(percent_eds))
+
+race.gender.ed.disability <- merge(race.gender.ed, disability.data, by = c("school_code", "school_name"), all = TRUE)
+
+race.gender.ed.disability.title_1 <- merge(race.gender.ed.disability, title_1.df, by = c("school_code", "school_name"), all = TRUE)
+
+final_school_data <- merge(race.gender.ed.disability.title_1, SCHOOLINFO, by = c("school_code", "school_name"), all = TRUE)
+
+final_school_data <- final_school_data %>%
+  rename(percent_meeting = Percent.Meeting.Benchmark.or.Standard,
+         missed_school_days = Missed.Days.due.to.Hurricane.Florence,
+         region = State.Board.Region,
+         growth_status = School.Growth.Status,
+         growth_index_score = School.Growth.Index.Score) %>%
+  mutate(title_1 = case_when(
+    title_1 == "" ~ "N",
+    TRUE ~ as.character(title_1)),
+    percent_meeting = as.numeric(percent_meeting))
+```
+
+```{r}
+# should we mean center percents? 
+model1 = lm(data = final_school_data, growth_index_score ~ .- growth_status - school_code - school_name)
+
+summary(model1)
+
+
+summary(final_school_data$growth_index_score)
+```
+
+```{r}
+ggplot(data = final_school_data %>% filter(!is.na(region)), aes(x = percent_white)) + 
+  geom_histogram() + 
+  facet_wrap(~region)
+```
+
+```{r}
+avg <- final_school_data %>%
+  group_by(region) %>%
+  mutate(mean_percent_white = mean(percent_white, na.rm=TRUE),
+         mean_percent_male = mean(percent_male, na.rm=TRUE),
+         mean_percent_eds = mean(percent_eds, na.rm=TRUE),
+         mean_percent_swd = mean(percent_swd, na.rm=TRUE))
+
+avg %>%
+  distinct(region, mean_percent_white) %>%
+  filter(!is.na(region)) %>%
+  spread(region, mean_percent_white)
+```
+
+
+
+>>>>>>> 2508052e831c24d2c61e079cafb59d74e415d010
