@@ -121,7 +121,7 @@ for (code in school.codes){
   }
   
   temp.df = data.frame(school_code = code, school_name = sname, 
-                       percent_white = percent_white)
+                       percent_white = percent_white, percent_passed = ALL$total_pct)
   racedata <- rbind(racedata, temp.df)
   racedata[] <- lapply(racedata, function(x) if(is.factor(x)) as.character(x) else x)
 }
@@ -209,8 +209,8 @@ for (code in school.codes){
   }
   
   else if (economic.status$subgroup == "NEDS") {
-    fem_number = economic.status$den
-    percent_neds = percent_neds/total_number
+    neds_number = economic.status$den
+    percent_neds = neds_number/total_number
     percent_male = 1 - percent_neds
     
   }
@@ -307,6 +307,7 @@ final_school_data <- final_school_data %>%
     title_1 == "" ~ "N",
     TRUE ~ as.character(title_1)),
     percent_meeting = as.numeric(percent_meeting))
+
 ```
 
 ```{r}
