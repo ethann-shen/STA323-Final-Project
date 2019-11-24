@@ -12,7 +12,7 @@ pkgTest <- function(x) {
     install.packages(x,dep=TRUE)
   }
 }
-pkgs <- c("tidyverse", "ggplot2", "ggpubr", "caTools", "MASS", "reshape2")
+pkgs <- c("tidyverse", "ggplot2", "ggpubr", "cowplot", "reshape2", "caTools", "MASS")
 
 for (pkg in pkgs) {
   pkgTest(pkg)
@@ -23,9 +23,10 @@ for (pkg in pkgs) {
 library(tidyverse)
 library(ggplot2)
 library(ggpubr)
+library(cowplot)
+library(reshape2)
 library(caTools) 
 library(MASS)
-library(reshape2)
 ```
 
 ```{r message = FALSE}
@@ -37,7 +38,26 @@ school_df_final <- school_df_final %>%
 ### Visualizations
 
 ```{r}
-school_df_final %>%
+yes = c("#66c2a5",
+        "#fc8d62",
+        "#8da0cb",
+        "#e78ac3")
+
+
+ya = c(
+  "#8dd3c7",
+  "#ffffb3",
+  "#bebada",
+  "#fb8072"
+)
+
+heh = c(
+  "#1f78b4",
+  "#fdbf6f",
+  "#33a02c",
+  "#fb9a99"
+)
+avg.dem.dist <- school_df_final %>%
   group_by(region) %>%
   mutate(mean_percent_white = mean(percent_white, na.rm = TRUE),
          mean_percent_male = mean(percent_male, na.rm = TRUE),
@@ -48,10 +68,16 @@ school_df_final %>%
            mean_percent_male,
            mean_percent_eds,
            mean_percent_swd) %>%
-  gather(variable, value, -region) %>%
-  ggplot(aes(x = region, y = value * 100, fill = reorder(variable, -value))) + 
+  gather(variable, value, -region) 
+
+ggplot(avg.dem.dist, aes(x = region, y = value * 100, fill = reorder(variable, -value))) + 
   geom_bar(stat = "identity", position = "dodge") + 
-  scale_fill_discrete(name = "Demographic Label", labels = c("White", "Male", "EDS", "SWD")) + 
+  scale_fill_manual(name = "Demographic Label", 
+                    labels = c("White", "Male", "EDS", "SWD"),
+                    values = heh#c("#a1dab4", "#41b6c4", "#225ea8", "#253494")
+  ) + 
+  #  scale_fill_discrete(name = "Demographic Label", labels = c("White", "Male", "EDS", "SWD")) + 
+  
   labs(title = "Average Demographic Distribution by Region", 
        x = "Region", 
        y = "Percent") + 
@@ -60,12 +86,33 @@ school_df_final %>%
 ```
 
 ```{r}
+
+col.pal = c("#8dd3c7",
+            "#ffffb3",
+            "#bebada",
+            "#fb8072",
+            "#80b1d3",
+            "#fdb462",
+            "#b3de69",
+            "#fccde5")
+
+
+col.pal.2 = c('#66c2a5',
+              '#fc8d62',
+              '#8da0cb',
+              '#e78ac3',
+              '#a6d854',
+              '#ffd92f',
+              '#e5c494',
+              '#b3b3b3')
+
 ggplot(school_df_final, aes(x = growth_index_score, fill = region)) + 
   geom_histogram(binwidth = 0.9, show.legend = FALSE) + 
   facet_wrap(~region, nrow = 4) + 
   labs(title = "Histogram of Growth Index Score by Region", 
        x = "Growth Index Score", 
        y = "Count") +
+  scale_fill_manual(values = col.pal) + 
   theme_minimal() 
 ```
 
@@ -100,6 +147,25 @@ ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) +
                        name="Correlation") + 
   theme_minimal() +
   rotate_x_text(angle = 50) 
+```
+
+```{r}
+numeric.cols <- school_df_final[ , purrr::map_lgl(school_df_final, is.numeric)]
+
+
+psych::pairs.panels(numeric.cols[c(ncol(numeric.cols), 1:4)],
+                    smooth = FALSE,
+                    pch = 1,
+                    ellipses = FALSE,
+                    hist.col = "#80b1d3")
+
+
+pairs(numeric.cols[c(ncol(numeric.cols), 5:8)],
+      lower.panel = NULL)
+
+pairs(numeric.cols[c(ncol(numeric.cols), 9:11)],
+      lower.panel = NULL)
+
 ```
 
 
