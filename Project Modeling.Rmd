@@ -5,10 +5,25 @@ date: "11/23/2019"
 output: html_document
 ---
 
+```{r, echo = FALSE, include = FALSE}
+# Installing packages
+pkgTest <- function(x) {
+  if (!require(x,character.only = TRUE)) {
+    install.packages(x,dep=TRUE)
+  }
+}
+pkgs <- c("tidyverse", "ggplot2", "ggpubr", "caTools", "MASS")
+
+for (pkg in pkgs) {
+  pkgTest(pkg)
+}
+```
+
 ```{r}
 library(tidyverse)
 library(ggplot2)
-require(caTools) 
+library(ggpubr)
+library(caTools) 
 library(MASS)
 ```
 
@@ -40,7 +55,7 @@ school_df_final %>%
        x = "Region", 
        y = "Percent") + 
   theme_minimal() + 
-  ggpubr::rotate_x_text(angle = 50)
+  rotate_x_text(angle = 50)
 ```
 
 ```{r}
