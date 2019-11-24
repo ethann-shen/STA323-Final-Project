@@ -27,7 +27,7 @@ library(caTools)
 library(MASS)
 ```
 
-```{r}
+```{r message = FALSE}
 school_df_final <- read_csv("school_df_final.csv")
 school_df_final <- school_df_final %>%
   na.omit()
@@ -66,6 +66,18 @@ ggplot(school_df_final, aes(x = growth_index_score, fill = region)) +
        x = "Growth Index Score", 
        y = "Count") +
   theme_minimal() 
+```
+
+```{r}
+ACT.info <- school_df_final %>%
+  dplyr::select(percent_ACTEN_meeting, 
+                percent_ACTMA_meeting,
+                percent_ACTRD_meeting,
+                percent_ACTSC_meeting,
+                percent_ACTWR_meeting,
+                percent_ACT_meeting)
+
+corACT
 ```
 
 
@@ -126,12 +138,12 @@ It is clear that race, region, and ACT performance are strong indicators of perf
 ```{r}
 #different linear model with interactions
 linear.fit3 <- lm(growth_index_score ~ percent_white + percent_ACT_meeting  + region + percent_white*percent_ACT_meeting +  percent_white*region
-                   + region*percent_ACT_meeting, data = training)
+                  + region*percent_ACT_meeting, data = training)
 
 linear.fit4 <- lm(growth_index_score ~ percent_white + percent_ACT_meeting  + region + percent_white*percent_ACT_meeting +  percent_white*region, data = training)
 
 linear.fit5 <- lm(growth_index_score ~ percent_white + percent_ACT_meeting  + region + percent_white*region
-                   + region*percent_ACT_meeting, data = training)
+                  + region*percent_ACT_meeting, data = training)
 
 linear.fit6 <- lm(growth_index_score ~ percent_white + percent_ACT_meeting  + region + percent_white*percent_ACT_meeting + region*percent_ACT_meeting, data = training)
 
@@ -155,7 +167,7 @@ summary(linear.fit9)$adj.r.squared
 #Interactions have slightly improved the the adjusted R squared. We will choose the following model as our final linear model based on adjusted R squared value.
 
 linear.fit.final <- lm(growth_index_score ~ percent_white + percent_ACT_meeting  + region + percent_white*region
-                   + region*percent_ACT_meeting, data = training)
+                       + region*percent_ACT_meeting, data = training)
 summary(linear.fit.final)
 ```
 
