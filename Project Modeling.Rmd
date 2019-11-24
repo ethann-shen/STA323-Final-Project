@@ -5,37 +5,81 @@ date: "11/23/2019"
 output: html_document
 ---
 
+```{r, echo = FALSE, include = FALSE}
+# Installing packages
+pkgTest <- function(x) {
+  if (!require(x,character.only = TRUE)) {
+    install.packages(x,dep=TRUE)
+  }
+}
+pkgs <- c("tidyverse", "ggplot2", "ggpubr", "caTools", "MASS")
+
+for (pkg in pkgs) {
+  pkgTest(pkg)
+}
+```
+
 ```{r}
 library(tidyverse)
 library(ggplot2)
-require(caTools) 
+library(ggpubr)
+library(caTools) 
+library(MASS)
 ```
 
-```{r}
-school_df_final <- read.csv("school_df_final.csv")
+```{r message = FALSE}
+school_df_final <- read_csv("school_df_final.csv")
+school_df_final <- school_df_final %>%
+  na.omit()
 ```
-
-
 
 ### Visualizations
+
 ```{r}
-ggplot(data = final_school_data %>% filter(!is.na(region)), aes(x = percent_white)) + 
-  geom_histogram() + 
-  facet_wrap(~region)
+school_df_final %>%
+  group_by(region) %>%
+  mutate(mean_percent_white = mean(percent_white, na.rm = TRUE),
+         mean_percent_male = mean(percent_male, na.rm = TRUE),
+         mean_percent_eds = mean(percent_eds, na.rm = TRUE),
+         mean_percent_swd = mean(percent_swd, na.rm = TRUE)) %>%
+  distinct(region, 
+           mean_percent_white,
+           mean_percent_male,
+           mean_percent_eds,
+           mean_percent_swd) %>%
+  gather(variable, value, -region) %>%
+  ggplot(aes(x = region, y = value * 100, fill = reorder(variable, -value))) + 
+  geom_bar(stat = "identity", position = "dodge") + 
+  scale_fill_discrete(name = "Demographic Label", labels = c("White", "Male", "EDS", "SWD")) + 
+  labs(title = "Average Demographic Distribution by Region", 
+       x = "Region", 
+       y = "Percent") + 
+  theme_minimal() + 
+  rotate_x_text(angle = 50)
 ```
 
 ```{r}
-avg <- final_school_data %>%
-  group_by(region) %>%
-  mutate(mean_percent_white = mean(percent_white, na.rm=TRUE),
-         mean_percent_male = mean(percent_male, na.rm=TRUE),
-         mean_percent_eds = mean(percent_eds, na.rm=TRUE),
-         mean_percent_swd = mean(percent_swd, na.rm=TRUE))
-avg %>%
-  distinct(region, mean_percent_white) %>%
-  filter(!is.na(region)) %>%
-  spread(region, mean_percent_white)
+ggplot(school_df_final, aes(x = growth_index_score, fill = region)) + 
+  geom_histogram(binwidth = 0.9, show.legend = FALSE) + 
+  facet_wrap(~region, nrow = 4) + 
+  labs(title = "Histogram of Growth Index Score by Region", 
+       x = "Growth Index Score", 
+       y = "Count") +
+  theme_minimal() 
 ```
+
+```{r}
+ACT.info <- school_df_final %>%
+  dplyr::select(percent_ACTEN_meeting, 
+                percent_ACTMA_meeting,
+                percent_ACTRD_meeting,
+                percent_ACTSC_meeting,
+                percent_ACTWR_meeting,
+                percent_ACT_meeting)
+
+corACT
+```
+
 
 ### Modeling 
 
@@ -53,16 +97,98 @@ test = na.omit(testing)
 ```
 
 
+<<<<<<< HEAD
 #### Regression
+=======
+```{r}
+#testing for multicolinearity
+
+#first, we will look for multicolinearity between the demographic variables (race, gender, eds, swd)
+
+my_data1 <- training[, c(3,4,5,6)]
+res1 <- cor(my_data1, use = "complete.obs")
+res1
+my_data2 <- training[, c(8, 9, 10, 11, 12, 13)]
+res2 <- cor(my_data2, use = "complete.obs")
+res2
+```
+
+The first matrix does not show heavy multicolinearity. However, due to the heavity multicolonearity between all of the different types of ACT section performances (all above 0.8), we will just include the percent of students who met standards overall on the ACT (not broken down by subject). 
+
+```{r}
+#first we omit any remaining NA values from our data
+training<-na.omit(training) 
+```
+
+
+>>>>>>> f77c211a6a980b3901ddb3019ee1738837673980
 
 ##### Linear
 ```{r}
-# should we mean center percents? 
-model1 = lm(data = final_school_data_imp, growth_index_score ~ .- growth_status - school_code - school_name)
+#linear model with selection- first, we are fitting a full model (except for those specific ACT variables we are cutting)
+linear.fit1 <- lm(growth_index_score ~ percent_white + percent_male + percent_eds + percent_swd + title_1 + percent_ACT_meeting + missed_school_days + region, data = training)
+summary(linear.fit1)
 
-summary(model1)
+```
+
+Our full model does not perform well (very low adjusted R squared). We will try performing stepwise selection on the model to see if we can improve performance.
 
 
+```{r}
+#linear model with stepwise selection
+linear.fit2 <- stepAIC(linear.fit1, direction = "both", trace = FALSE)
+summary(linear.fit2)
+```
+
+It is clear that race, region, and ACT performance are strong indicators of performance. Are any interactions significant?
+
+```{r}
+#different linear model with interactions
+linear.fit3 <- lm(growth_index_score ~ percent_white + percent_ACT_meeting  + region + percent_white*percent_ACT_meeting +  percent_white*region
+                  + region*percent_ACT_meeting, data = training)
+
+linear.fit4 <- lm(growth_index_score ~ percent_white + percent_ACT_meeting  + region + percent_white*percent_ACT_meeting +  percent_white*region, data = training)
+
+linear.fit5 <- lm(growth_index_score ~ percent_white + percent_ACT_meeting  + region + percent_white*region
+                  + region*percent_ACT_meeting, data = training)
+
+linear.fit6 <- lm(growth_index_score ~ percent_white + percent_ACT_meeting  + region + percent_white*percent_ACT_meeting + region*percent_ACT_meeting, data = training)
+
+linear.fit7 <- lm(growth_index_score ~ percent_white + percent_ACT_meeting  + region +  percent_white*percent_ACT_meeting, data = training)
+
+linear.fit8 <- lm(growth_index_score ~ percent_white + percent_ACT_meeting  + region +  percent_white*region, data = training)
+
+linear.fit9 <- lm(growth_index_score ~ percent_white + percent_ACT_meeting  + region +  region*percent_ACT_meeting, data = training)
+
+summary(linear.fit2)$adj.r.squared 
+summary(linear.fit3)$adj.r.squared 
+summary(linear.fit4)$adj.r.squared 
+summary(linear.fit5)$adj.r.squared 
+summary(linear.fit6)$adj.r.squared 
+summary(linear.fit7)$adj.r.squared 
+summary(linear.fit8)$adj.r.squared 
+summary(linear.fit9)$adj.r.squared 
+```
+
+```{r}
+#Interactions have slightly improved the the adjusted R squared. We will choose the following model as our final linear model based on adjusted R squared value.
+
+linear.fit.final <- lm(growth_index_score ~ percent_white + percent_ACT_meeting  + region + percent_white*region
+                       + region*percent_ACT_meeting, data = training)
+summary(linear.fit.final)
+```
+
+
+We will try fitting GAMs.
+
+```{r}
+#LATER
+```
+
+Now we will move to classification.
+
+
+<<<<<<< HEAD
 summary(final_school_data$growth_index_score)
 ```
 
@@ -97,3 +223,5 @@ mean(pred != testing[,16])
 
 varImpPlot(rf)
 ```
+=======
+>>>>>>> f77c211a6a980b3901ddb3019ee1738837673980
