@@ -190,13 +190,13 @@ summary(final_school_data$growth_index_score)
 ##### Random Forest
 
 ```{r}
-rf <- randomForest(
+rf.reg <- randomForest(
   growth_index_score ~ . -school_code - school_name - percent_ACTWR_meeting - percent_ACTSC_meeting - percent_ACTRD_meeting - percent_ACTMA_meeting - percent_ACTEN_meeting - growth_status,
   data=train, ntree = 10000)
-summary(rf)
-rf
-
-varImpPlot(rf)
+summary(rf.reg)
+rf.reg
+model.diagnostics(rf.reg)
+varImpPlot(rf.reg)
 ``` 
 
 
@@ -205,16 +205,16 @@ varImpPlot(rf)
 ##### Random Forest
 
 ```{r}
-rf <- randomForest(
+rf.class <- randomForest(
   growth_status ~ . -school_code - school_name - percent_ACTWR_meeting - percent_ACTSC_meeting - percent_ACTRD_meeting - percent_ACTMA_meeting - percent_ACTEN_meeting - growth_index_score,
   data=train, ntree = 10000)
 
-pred = predict(rf, newdata=test)
+pred = predict(rf.class, newdata=test)
 cm = table(test$growth_status, pred)
 cm
 pred
 
 mean(pred != testing[,16])
 
-varImpPlot(rf)
+varImpPlot(rf.class)
 ```
