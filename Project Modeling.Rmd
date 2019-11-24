@@ -114,8 +114,12 @@ school_df_final <- school_df_final[rows, ]
 sample = sample.split(school_df_final,SplitRatio = 0.75) # splits the data in the ratio mentioned in SplitRatio. After splitting marks these rows as logical TRUE and the the remaining are marked as logical FALSE
 training =subset(school_df_final,sample ==TRUE) # creates a training dataset named train1 with rows which are marked as TRUE
 testing=subset(school_df_final, sample==FALSE)
+train = na.omit(training)
+test = na.omit(testing)
 ```
 
+
+#### Regression
 
 ```{r}
 #testing for multicolinearity
@@ -138,7 +142,7 @@ training<-na.omit(training)
 ```
 
 
-
+##### Linear
 ```{r}
 #linear model with selection- first, we are fitting a full model (except for those specific ACT variables we are cutting)
 linear.fit1 <- lm(growth_index_score ~ percent_white + percent_male + percent_eds + percent_swd + title_1 + percent_ACT_meeting + missed_school_days + region, data = training)
@@ -203,3 +207,36 @@ We will try fitting GAMs.
 Now we will move to classification.
 
 
+summary(final_school_data$growth_index_score)
+
+##### Random Forest
+
+```{r}
+rf <- randomForest(
+  growth_index_score ~ . -school_code - school_name - percent_ACTWR_meeting - percent_ACTSC_meeting - percent_ACTRD_meeting - percent_ACTMA_meeting - percent_ACTEN_meeting - growth_status,
+  data=train, ntree = 10000)
+summary(rf)
+rf
+
+varImpPlot(rf)
+``` 
+
+
+### Classification 
+
+##### Random Forest
+
+```{r}
+rf <- randomForest(
+  growth_status ~ . -school_code - school_name - percent_ACTWR_meeting - percent_ACTSC_meeting - percent_ACTRD_meeting - percent_ACTMA_meeting - percent_ACTEN_meeting - growth_index_score,
+  data=train, ntree = 10000)
+
+pred = predict(rf, newdata=test)
+cm = table(test$growth_status, pred)
+cm
+pred
+
+mean(pred != testing[,16])
+
+varImpPlot(rf)
+```
