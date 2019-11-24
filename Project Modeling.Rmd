@@ -97,9 +97,8 @@ test = na.omit(testing)
 ```
 
 
-<<<<<<< HEAD
 #### Regression
-=======
+
 ```{r}
 #testing for multicolinearity
 
@@ -120,8 +119,6 @@ The first matrix does not show heavy multicolinearity. However, due to the heavi
 training<-na.omit(training) 
 ```
 
-
->>>>>>> f77c211a6a980b3901ddb3019ee1738837673980
 
 ##### Linear
 ```{r}
@@ -188,9 +185,7 @@ We will try fitting GAMs.
 Now we will move to classification.
 
 
-<<<<<<< HEAD
 summary(final_school_data$growth_index_score)
-```
 
 ##### Random Forest
 
@@ -202,7 +197,7 @@ summary(rf)
 rf
 
 varImpPlot(rf)
-```
+``` 
 
 
 ### Classification 
@@ -223,5 +218,3 @@ mean(pred != testing[,16])
 
 varImpPlot(rf)
 ```
-=======
->>>>>>> f77c211a6a980b3901ddb3019ee1738837673980
