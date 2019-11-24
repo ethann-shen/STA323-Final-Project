@@ -12,7 +12,7 @@ pkgTest <- function(x) {
     install.packages(x,dep=TRUE)
   }
 }
-pkgs <- c("tidyverse", "ggplot2", "ggpubr", "caTools", "MASS")
+pkgs <- c("tidyverse", "ggplot2", "ggpubr", "caTools", "MASS", "reshape2")
 
 for (pkg in pkgs) {
   pkgTest(pkg)
@@ -25,6 +25,7 @@ library(ggplot2)
 library(ggpubr)
 library(caTools) 
 library(MASS)
+library(reshape2)
 ```
 
 ```{r message = FALSE}
@@ -76,8 +77,29 @@ ACT.info <- school_df_final %>%
                 percent_ACTSC_meeting,
                 percent_ACTWR_meeting,
                 percent_ACT_meeting)
+cor.ACT <- cor(my_data2, use = "complete.obs")
 
-corACT
+min(cor.ACT)
+
+get_upper_tri <- function(cormat){
+  cormat[upper.tri(cormat)]<- NA
+  return(cormat)
+}
+upper_tri <- get_upper_tri(cor.ACT)
+
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+
+
+ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile(color = "white") + 
+  labs(title = "Correlation Matrix of ACT Subcategories", 
+       x = "",
+       y = "") + 
+  scale_fill_gradient2(low = "#edf8b1", mid = "#7fcdbb", high = "#2c7fb8", 
+                       midpoint = (min(cor.ACT) + 1)/2, limit = c(min(cor.ACT),1), space = "Lab", 
+                       name="Correlation") + 
+  theme_minimal() +
+  rotate_x_text(angle = 50) 
 ```
 
 
@@ -107,9 +129,9 @@ test = na.omit(testing)
 my_data1 <- training[, c(3,4,5,6)]
 res1 <- cor(my_data1, use = "complete.obs")
 res1
-my_data2 <- training[, c(8, 9, 10, 11, 12, 13)]
-res2 <- cor(my_data2, use = "complete.obs")
-res2
+# my_data2 <- training[, c(8, 9, 10, 11, 12, 13)]
+# res2 <- cor(my_data2, use = "complete.obs")
+# res2
 ```
 
 The first matrix does not show heavy multicolinearity. However, due to the heavity multicolonearity between all of the different types of ACT section performances (all above 0.8), we will just include the percent of students who met standards overall on the ACT (not broken down by subject). 
