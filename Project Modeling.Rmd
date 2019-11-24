@@ -73,7 +73,7 @@ avg.dem.dist <- school_df_final %>%
 ggplot(avg.dem.dist, aes(x = region, y = value * 100, fill = reorder(variable, -value))) + 
   geom_bar(stat = "identity", position = "dodge") + 
   scale_fill_manual(name = "Demographic Label", 
-                    labels = c("White", "Male", "EDS", "SWD"),
+                    labels = c("White", "Male", "Economically Disadvantaged", "Students with Disabilities"),
                     values = heh#c("#a1dab4", "#41b6c4", "#225ea8", "#253494")
   ) + 
   #  scale_fill_discrete(name = "Demographic Label", labels = c("White", "Male", "EDS", "SWD")) + 
