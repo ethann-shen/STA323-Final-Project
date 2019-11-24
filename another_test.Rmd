@@ -437,3 +437,17 @@ summary(model1)
 
 plot(model1)
 ```
+
+### Random Forest - Regression
+
+```{r}
+
+```
+
+
+### Random Forest - Classification 
+
+```{r}
+
+```
+
