@@ -10,6 +10,11 @@ library(tidyverse)
 library(ggplot2)
 require(caTools) 
 library(MASS)
+require(foreign)
+require(Hmisc)
+require(reshape2)
+library(e1071)
+library(caret)
 ```
 
 ```{r}
@@ -17,16 +22,17 @@ school_df_final <- read.csv("school_df_final.csv")
 ```
 
 
+TRY BOX COX. SCREEn. 
 
 ### Visualizations
 ```{r}
-ggplot(data = final_school_data %>% filter(!is.na(region)), aes(x = percent_white)) + 
+ggplot(data = school_df_final %>% filter(!is.na(region)), aes(x = percent_white)) + 
   geom_histogram() + 
   facet_wrap(~region)
 ```
 
 ```{r}
-avg <- final_school_data %>%
+avg <- school_df_final %>%
   group_by(region) %>%
   mutate(mean_percent_white = mean(percent_white, na.rm=TRUE),
          mean_percent_male = mean(percent_male, na.rm=TRUE),
@@ -122,19 +128,54 @@ summary(linear.fit9)$adj.r.squared
 
 ```{r}
 #Interactions have slightly improved the the adjusted R squared. We will choose the following model as our final linear model based on adjusted R squared value.
+#But now, calculating MSE for the various models, we see that the model without interactions has the lowest test MSE
 
-linear.fit.final <- lm(growth_index_score ~ percent_white + percent_ACT_meeting  + region + percent_white*region
-                   + region*percent_ACT_meeting, data = training)
-summary(linear.fit.final)
+actual <- testing$growth_index_score
+pred <- pred <- predict.lm(linear.fit2, testing)
+
+#mse function
+MSE <- function(predictions, actual) {
+  mean_squared_error = 0
+  for (i in 1:length(predictions)){
+    predicted_value = predictions[i]
+    actual_value = actual[i]
+    diff = (predicted_value - actual_value)
+    squared_diff = diff^2
+   d_error = mean_squared_error + squared_diff
+  }
+  mse = mean_squared_error/length(predictions)
+  return(mse)
+}
+MSE(actual, pred)
+
 ```
 
 
 We will try fitting GAMs.
 
+
+Now we will move to classif mean_squareication.
+
+
 ```{r}
-#LATER
+ord.logistic <- polr(growth_status ~ percent_white + percent_ACT_meeting + 
+    region + percent_white*percent_ACT_meeting, data = training, Hess=TRUE)
+summary(ord.logistic)
 ```
 
-Now we will move to classification.
+```{r}
+p <- predict(ord.logistic, testing)
+```
+
+
+```{r}
+cfm <- confusionMatrix(p, testing$growth_status)
+cfm
+mean(p != testing$growth_status)
+```
+
+
+
+
 
 
