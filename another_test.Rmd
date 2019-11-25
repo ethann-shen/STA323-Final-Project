@@ -47,7 +47,7 @@ metStandards[] <- lapply(metStandards, function(x) if(is.factor(x)) as.character
 act <- read.csv("act_data.csv")
 act <- act %>%
   filter(Subgroup == "All Students", Grade.Span == "09-12", ACT.Subtest.or.Composite == "ACT composite score of 17 or higher") %>%
-  select(School.Name, School.Code, Percent.Meeting.Benchmark.or.Standard, Missed.Days.due.to.Hurricane.Florence)
+  dplyr::select(School.Name, School.Code, Percent.Meeting.Benchmark.or.Standard, Missed.Days.due.to.Hurricane.Florence)
 act[] <- lapply(act, function(x) if(is.factor(x)) as.character(x) else x)
 
 SCHOOLINFO <- inner_join(act, metStandards, by = "School.Name")
