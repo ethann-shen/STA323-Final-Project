@@ -9,7 +9,7 @@ output: html_document
 # Installing packages
 pkgTest <- function(x) {
   if (!require(x,character.only = TRUE)) {
-    install.packages(x,dep=TRUE)
+    install.packages(x,dep=TRUE) 
   }
 }
 pkgs <- c("tidyverse", "ggplot2", "ggpubr", "caTools", "MASS", "reshape2")

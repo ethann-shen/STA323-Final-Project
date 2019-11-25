@@ -23,7 +23,7 @@ pkgTest <- function(x) {
     install.packages(x,dep=TRUE)
   }
 }
-pkgs <- c("tidyverse")
+pkgs <- c("tidyverse", "mice", "randomForest")
 
 for (pkg in pkgs) {
   pkgTest(pkg)
@@ -33,6 +33,7 @@ for (pkg in pkgs) {
 ```{r}
 library(tidyverse) 
 library(mice)
+library(randomForest)
 ```
 
 ```{r}
@@ -438,16 +439,5 @@ summary(model1)
 plot(model1)
 ```
 
-### Random Forest - Regression
 
-```{r}
-
-```
-
-
-### Random Forest - Classification 
-
-```{r}
-
-```
 
