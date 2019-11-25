@@ -27,6 +27,7 @@ library(cowplot)
 library(reshape2)
 library(caTools) 
 library(MASS)
+library(randomForest)
 ```
 
 ```{r message = FALSE}
@@ -174,6 +175,10 @@ pairs(numeric.cols[c(ncol(numeric.cols), 9:11)],
 ```{r}
 #splitting data into training and testing
 
+school_df_final$title_1 <- as.factor(school_df_final$title_1)
+school_df_final$region <- as.factor(school_df_final$region)
+school_df_final$growth_status <- as.factor(school_df_final$growth_status)
+
 set.seed(123)   #  set seed to ensure you always have same random numbers generated
 rows <- sample(nrow(school_df_final))
 school_df_final <- school_df_final[rows, ]
@@ -205,6 +210,7 @@ The first matrix does not show heavy multicolinearity. However, due to the heavi
 ```{r}
 #first we omit any remaining NA values from our data
 training<-na.omit(training) 
+training
 ```
 
 
@@ -293,16 +299,14 @@ varImpPlot(rf.reg)
 ##### Random Forest
 
 ```{r}
-rf.class <- randomForest(
-  growth_status ~ . -school_code - school_name - percent_ACTWR_meeting - percent_ACTSC_meeting - percent_ACTRD_meeting - percent_ACTMA_meeting - percent_ACTEN_meeting - growth_index_score,
-  data=train, ntree = 10000)
+rf.class <- randomForest(growth_status ~ . -school_code - school_name - percent_ACTWR_meeting - percent_ACTSC_meeting - percent_ACTRD_meeting - percent_ACTMA_meeting - percent_ACTEN_meeting - growth_index_score, data=train, ntree = 1000)
 
 pred = predict(rf.class, newdata=test)
 cm = table(test$growth_status, pred)
 cm
 pred
 
-mean(pred != testing[,16])
+mean(pred != test[,16])
 
 varImpPlot(rf.class)
 ```
