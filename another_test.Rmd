@@ -23,7 +23,7 @@ pkgTest <- function(x) {
     install.packages(x,dep=TRUE)
   }
 }
-pkgs <- c("tidyverse")
+pkgs <- c("tidyverse", "mice", "randomForest")
 
 for (pkg in pkgs) {
   pkgTest(pkg)
@@ -33,19 +33,21 @@ for (pkg in pkgs) {
 ```{r}
 library(tidyverse) 
 library(mice)
+library(randomForest)
 ```
 
 ```{r}
 metStandards <- read.csv("met_standards.csv")
+
 metStandards <- metStandards %>%
   filter(Subgroup == "All Students", Grade.Span == "09-12") %>%
-  select(School.Name, State.Board.Region, School.Growth.Status, School.Growth.Index.Score)
+  dplyr::select(School.Name, State.Board.Region, School.Growth.Status, School.Growth.Index.Score)
 metStandards[] <- lapply(metStandards, function(x) if(is.factor(x)) as.character(x) else x)
 
 act <- read.csv("act_data.csv")
 act <- act %>%
   filter(Subgroup == "All Students", Grade.Span == "09-12", ACT.Subtest.or.Composite == "ACT composite score of 17 or higher") %>%
-  select(School.Name, School.Code, Percent.Meeting.Benchmark.or.Standard, Missed.Days.due.to.Hurricane.Florence)
+  dplyr::select(School.Name, School.Code, Percent.Meeting.Benchmark.or.Standard, Missed.Days.due.to.Hurricane.Florence)
 act[] <- lapply(act, function(x) if(is.factor(x)) as.character(x) else x)
 
 SCHOOLINFO <- inner_join(act, metStandards, by = "School.Name")
@@ -438,16 +440,5 @@ summary(model1)
 plot(model1)
 ```
 
-### Random Forest - Regression
 
-```{r}
-
-```
-
-
-### Random Forest - Classification 
-
-```{r}
-
-```
 
