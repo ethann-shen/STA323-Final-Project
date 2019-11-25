@@ -38,9 +38,10 @@ library(randomForest)
 
 ```{r}
 metStandards <- read.csv("met_standards.csv")
+
 metStandards <- metStandards %>%
   filter(Subgroup == "All Students", Grade.Span == "09-12") %>%
-  select(School.Name, State.Board.Region, School.Growth.Status, School.Growth.Index.Score)
+  dplyr::select(School.Name, State.Board.Region, School.Growth.Status, School.Growth.Index.Score)
 metStandards[] <- lapply(metStandards, function(x) if(is.factor(x)) as.character(x) else x)
 
 act <- read.csv("act_data.csv")
