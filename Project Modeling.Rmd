@@ -12,7 +12,7 @@ pkgTest <- function(x) {
     install.packages(x,dep=TRUE)
   }
 }
-pkgs <- c("tidyverse", "ggplot2", "ggpubr", "cowplot", "reshape2", "caTools", "MASS")
+pkgs <- c("tidyverse", "ggplot2", "ggpubr", "cowplot", "reshape2", "caTools", "MASS", "psych")
 
 for (pkg in pkgs) {
   pkgTest(pkg)
@@ -27,6 +27,7 @@ library(cowplot)
 library(reshape2)
 library(caTools) 
 library(MASS)
+library(psych)
 ```
 
 ```{r message = FALSE}
@@ -112,8 +113,8 @@ ggplot(school_df_final, aes(x = growth_index_score, fill = region)) +
   labs(title = "Histogram of Growth Index Score by Region", 
        x = "Growth Index Score", 
        y = "Count") +
-  scale_fill_manual(values = col.pal) + 
-  theme_minimal() 
+  scale_fill_manual(values = col.pal.2) + 
+  theme_bw() 
 ```
 
 ```{r}
@@ -125,8 +126,6 @@ ACT.info <- school_df_final %>%
                 percent_ACTWR_meeting,
                 percent_ACT_meeting)
 cor.ACT <- cor(my_data2, use = "complete.obs")
-
-min(cor.ACT)
 
 get_upper_tri <- function(cormat){
   cormat[upper.tri(cormat)]<- NA
@@ -152,13 +151,22 @@ ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) +
 ```{r}
 numeric.cols <- school_df_final[ , purrr::map_lgl(school_df_final, is.numeric)]
 
-
-psych::pairs.panels(numeric.cols[c(ncol(numeric.cols), 1:4)],
+pairs.panels(numeric.cols[c(ncol(numeric.cols), 1:4)],
+                    smooth = FALSE,
+                    pch = 1,
+                    ellipses = FALSE,
+                    hist.col = "#80b1d3")
+pairs.panels(numeric.cols[c(ncol(numeric.cols), 5:8)],
                     smooth = FALSE,
                     pch = 1,
                     ellipses = FALSE,
                     hist.col = "#80b1d3")
 
+pairs.panels(numeric.cols[c(ncol(numeric.cols), 9:11)],
+                    smooth = FALSE,
+                    pch = 1,
+                    ellipses = FALSE,
+                    hist.col = "#80b1d3")
 
 pairs(numeric.cols[c(ncol(numeric.cols), 5:8)],
       lower.panel = NULL)
