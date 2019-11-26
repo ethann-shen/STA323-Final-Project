@@ -93,10 +93,8 @@ ggplot(avg.dem.dist, aes(x = region, y = value * 100, fill = reorder(variable, -
 ```
 
 ```{r}
+#TRY BOX COX. SCREEn. 
 
-<<<<<<< HEAD
-TRY BOX COX. SCREEn. 
-=======
 col.pal = c("#8dd3c7",
             "#ffffb3",
             "#bebada",
