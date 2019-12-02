@@ -12,7 +12,7 @@ pkgTest <- function(x) {
     install.packages(x,dep=TRUE) 
   }
 }
-pkgs <- c("tidyverse", "ggplot2", "ggpubr", "cowplot", "reshape2", "caTools", "MASS")
+pkgs <- c("tidyverse", "ggplot2", "ggpubr", "cowplot", "reshape2", "caTools", "MASS", "psych")
 
 for (pkg in pkgs) {
   pkgTest(pkg)
@@ -27,6 +27,12 @@ library(cowplot)
 library(reshape2)
 library(caTools) 
 library(MASS)
+require(foreign)
+require(Hmisc)
+require(reshape2)
+library(e1071)
+library(caret)
+library(psych)
 library(randomForest)
 ```
 
@@ -87,6 +93,7 @@ ggplot(avg.dem.dist, aes(x = region, y = value * 100, fill = reorder(variable, -
 ```
 
 ```{r}
+#TRY BOX COX. SCREEn. 
 
 col.pal = c("#8dd3c7",
             "#ffffb3",
@@ -113,11 +120,30 @@ ggplot(school_df_final, aes(x = growth_index_score, fill = region)) +
   labs(title = "Histogram of Growth Index Score by Region", 
        x = "Growth Index Score", 
        y = "Count") +
-  scale_fill_manual(values = col.pal) + 
-  theme_minimal() 
+  scale_fill_manual(values = col.pal.2) + 
+  theme_bw() 
+```
+
+
+```{r}
+
+ggplot(data = school_df_final %>% filter(!is.na(region)), aes(x = percent_white)) + 
+  geom_histogram() + 
+  facet_wrap(~region)
 ```
 
 ```{r}
+avg <- school_df_final %>%
+  group_by(region) %>%
+  mutate(mean_percent_white = mean(percent_white, na.rm=TRUE),
+         mean_percent_male = mean(percent_male, na.rm=TRUE),
+         mean_percent_eds = mean(percent_eds, na.rm=TRUE),
+         mean_percent_swd = mean(percent_swd, na.rm=TRUE))
+avg %>%
+  distinct(region, mean_percent_white) %>%
+  filter(!is.na(region)) %>%
+  spread(region, mean_percent_white)
+
 ACT.info <- school_df_final %>%
   dplyr::select(percent_ACTEN_meeting, 
                 percent_ACTMA_meeting,
@@ -126,8 +152,6 @@ ACT.info <- school_df_final %>%
                 percent_ACTWR_meeting,
                 percent_ACT_meeting)
 cor.ACT <- cor(my_data2, use = "complete.obs")
-
-min(cor.ACT)
 
 get_upper_tri <- function(cormat){
   cormat[upper.tri(cormat)]<- NA
@@ -153,13 +177,22 @@ ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) +
 ```{r}
 numeric.cols <- school_df_final[ , purrr::map_lgl(school_df_final, is.numeric)]
 
-
-psych::pairs.panels(numeric.cols[c(ncol(numeric.cols), 1:4)],
+pairs.panels(numeric.cols[c(ncol(numeric.cols), 1:4)],
+                    smooth = FALSE,
+                    pch = 1,
+                    ellipses = FALSE,
+                    hist.col = "#80b1d3")
+pairs.panels(numeric.cols[c(ncol(numeric.cols), 5:8)],
                     smooth = FALSE,
                     pch = 1,
                     ellipses = FALSE,
                     hist.col = "#80b1d3")
 
+pairs.panels(numeric.cols[c(ncol(numeric.cols), 9:11)],
+                    smooth = FALSE,
+                    pch = 1,
+                    ellipses = FALSE,
+                    hist.col = "#80b1d3")
 
 pairs(numeric.cols[c(ncol(numeric.cols), 5:8)],
       lower.panel = NULL)
@@ -263,20 +296,59 @@ summary(linear.fit9)$adj.r.squared
 
 ```{r}
 #Interactions have slightly improved the the adjusted R squared. We will choose the following model as our final linear model based on adjusted R squared value.
+#But now, calculating MSE for the various models, we see that the model without interactions has the lowest test MSE
+
+actual <- testing$growth_index_score
+pred <- pred <- predict.lm(linear.fit2, testing)
+
+#mse function
+MSE <- function(predictions, actual) {
+  mean_squared_error = 0
+  for (i in 1:length(predictions)){
+    predicted_value = predictions[i]
+    actual_value = actual[i]
+    diff = (predicted_value - actual_value)
+    squared_diff = diff^2
+   d_error = mean_squared_error + squared_diff
+  }
+  mse = mean_squared_error/length(predictions)
+  return(mse)
+}
+MSE(actual, pred)
 
 linear.fit.final <- lm(growth_index_score ~ percent_white + percent_ACT_meeting  + region + percent_white*region
                        + region*percent_ACT_meeting, data = training)
 summary(linear.fit.final)
+
 ```
 
 
 We will try fitting GAMs.
 
+
+Now we will move to classif mean_squareication.
+
+
 ```{r}
-#LATER
+ord.logistic <- polr(growth_status ~ percent_white + percent_ACT_meeting + 
+    region + percent_white*percent_ACT_meeting, data = training, Hess=TRUE)
+summary(ord.logistic)
 ```
 
-Now we will move to classification.
+```{r}
+p <- predict(ord.logistic, testing)
+```
+
+
+```{r}
+cfm <- confusionMatrix(p, testing$growth_status)
+cfm
+mean(p != testing$growth_status)
+```
+
+
+
+
 
 
 summary(final_school_data$growth_index_score)

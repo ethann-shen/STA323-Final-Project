@@ -23,7 +23,7 @@ pkgTest <- function(x) {
     install.packages(x,dep=TRUE)
   }
 }
-pkgs <- c("tidyverse", "mice", "randomForest")
+pkgs <- c("tidyverse")
 
 for (pkg in pkgs) {
   pkgTest(pkg)
@@ -33,21 +33,19 @@ for (pkg in pkgs) {
 ```{r}
 library(tidyverse) 
 library(mice)
-library(randomForest)
 ```
 
 ```{r}
 metStandards <- read.csv("met_standards.csv")
-
 metStandards <- metStandards %>%
   filter(Subgroup == "All Students", Grade.Span == "09-12") %>%
-  dplyr::select(School.Name, State.Board.Region, School.Growth.Status, School.Growth.Index.Score)
+  select(School.Name, State.Board.Region, School.Growth.Status, School.Growth.Index.Score)
 metStandards[] <- lapply(metStandards, function(x) if(is.factor(x)) as.character(x) else x)
 
 act <- read.csv("act_data.csv")
 act <- act %>%
   filter(Subgroup == "All Students", Grade.Span == "09-12", ACT.Subtest.or.Composite == "ACT composite score of 17 or higher") %>%
-  dplyr::select(School.Name, School.Code, Percent.Meeting.Benchmark.or.Standard, Missed.Days.due.to.Hurricane.Florence)
+  select(School.Name, School.Code, Percent.Meeting.Benchmark.or.Standard, Missed.Days.due.to.Hurricane.Florence)
 act[] <- lapply(act, function(x) if(is.factor(x)) as.character(x) else x)
 
 SCHOOLINFO <- inner_join(act, metStandards, by = "School.Name")
@@ -410,7 +408,7 @@ We only have 390 complete cases. With such a limited sample size, we cannot affo
 
 
 ### Visualizations
-```{r} 
+```{r}
 ggplot(data = final_school_data %>% filter(!is.na(region)), aes(x = percent_white)) + 
   geom_histogram() + 
   facet_wrap(~region)
@@ -433,12 +431,10 @@ avg %>%
 ### Modeling 
 ```{r}
 # should we mean center percents? 
-model1 = lm(data = someclownshit, growth_index_score ~ .- growth_status - school_code - school_name)
+model1 = lm(data = final_school_data_imp, growth_index_score ~ .- growth_status - school_code - school_name)
 
 summary(model1)
 
-plot(model1)
+
+summary(final_school_data$growth_index_score)
 ```
-
-
-
