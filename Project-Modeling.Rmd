@@ -5,15 +5,14 @@ date: "11/23/2019"
 output: html_document
 ---
 
-```{r, echo = FALSE, include = FALSE} 
+```{r, echo = FALSE, include = FALSE}
 # Installing packages
 pkgTest <- function(x) {
   if (!require(x,character.only = TRUE)) {
     install.packages(x,dep=TRUE) 
   }
 }
-pkgs <- c("tidyverse", "ggplot2", "ggpubr", "cowplot", "reshape2", "caTools", "MASS", "psych", 
-          "gridExtra")
+pkgs <- c("tidyverse", "ggplot2", "ggpubr", "cowplot", "reshape2", "caTools", "MASS", "psych")
 
 for (pkg in pkgs) {
   pkgTest(pkg)
@@ -35,8 +34,6 @@ library(e1071)
 library(caret)
 library(psych)
 library(randomForest)
-library(gridExtra)
-library(grid)
 ```
 
 ```{r message = FALSE}
@@ -91,10 +88,8 @@ ggplot(avg.dem.dist, aes(x = region, y = value * 100, fill = reorder(variable, -
   labs(title = "Average Demographic Distribution by Region", 
        x = "Region", 
        y = "Percent") + 
-  
-  theme_bw() + 
+  theme_minimal() + 
   rotate_x_text(angle = 50)
-
 ```
 
 ```{r}
@@ -119,32 +114,13 @@ col.pal.2 = c('#66c2a5',
               '#e5c494',
               '#b3b3b3')
 
-p1 <- ggplot(school_df_final, aes(x = growth_index_score, fill = region)) + 
+ggplot(school_df_final, aes(x = growth_index_score, fill = region)) + 
   geom_histogram(binwidth = 0.9, show.legend = FALSE) + 
   facet_wrap(~region, nrow = 4) + 
-  labs(subtitle = "by Region") +
-  scale_fill_manual(values = col.pal.2) + 
-  theme_bw() +
-  theme(axis.title.x=element_blank(),
-        axis.title.y=element_blank())
-
-
-
-p2 <- ggplot(school_df_final, aes(x = growth_index_score)) + 
-  geom_histogram(binwidth = 0.9, show.legend = FALSE, col = "black", fill = "#74a9cf") +
-  labs(y = "Count")+ 
-  theme_bw() + 
-  theme(axis.title.x=element_blank(),
-        axis.title.y=element_blank())
-
-grid.arrange(arrangeGrob(plot_grid(p2,p1,ncol=2), 
-                         top = textGrob("Histograms of Growth Index Score",gp=gpar(fontsize=15)), 
-                         left = textGrob("Count",gp=gpar(fontsize=11), rot = 90),
-                         bottom = textGrob("Growth Index Score",gp=gpar(fontsize=11))))
   labs(title = "Histogram of Growth Index Score by Region", 
        x = "Growth Index Score", 
        y = "Count") +
-  scale_fill_manual(values = col.pal.2) +  
+  scale_fill_manual(values = col.pal.2) + 
   theme_bw() 
 ```
 
@@ -195,7 +171,7 @@ ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) +
   scale_fill_gradient2(low = "#edf8b1", mid = "#7fcdbb", high = "#2c7fb8", 
                        midpoint = (min(cor.ACT) + 1)/2, limit = c(min(cor.ACT),1), space = "Lab", 
                        name="Correlation") + 
-  theme_bw() +
+  theme_minimal() +
   rotate_x_text(angle = 50) 
 ```
 
@@ -203,21 +179,21 @@ ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) +
 numeric.cols <- school_df_final[ , purrr::map_lgl(school_df_final, is.numeric)]
 
 pairs.panels(numeric.cols[c(ncol(numeric.cols), 1:4)],
-             smooth = FALSE,
-             pch = 1,
-             ellipses = FALSE,
-             hist.col = "#80b1d3") 
+                    smooth = FALSE,
+                    pch = 1,
+                    ellipses = FALSE,
+                    hist.col = "#80b1d3")
 pairs.panels(numeric.cols[c(ncol(numeric.cols), 5:8)],
-             smooth = FALSE,
-             pch = 1,
-             ellipses = FALSE,
-             hist.col = "#80b1d3")
+                    smooth = FALSE,
+                    pch = 1,
+                    ellipses = FALSE,
+                    hist.col = "#80b1d3")
 
 pairs.panels(numeric.cols[c(ncol(numeric.cols), 9:11)],
-             smooth = FALSE,
-             pch = 1,
-             ellipses = FALSE,
-             hist.col = "#80b1d3")
+                    smooth = FALSE,
+                    pch = 1,
+                    ellipses = FALSE,
+                    hist.col = "#80b1d3")
 
 pairs(numeric.cols[c(ncol(numeric.cols), 5:8)],
       lower.panel = NULL)
@@ -231,18 +207,6 @@ pairs(numeric.cols[c(ncol(numeric.cols), 9:11)],
 ### Modeling 
 
 ```{r}
-#splitting data into training and testing
-
-school_df_final$title_1 <- as.factor(school_df_final$title_1)
-school_df_final$region <- as.factor(school_df_final$region)
-school_df_final$growth_status <- as.factor(school_df_final$growth_status)
-
-set.seed(123)   #  set seed to ensure you always have same random numbers generated
-rows <- sample(nrow(school_df_final))
-school_df_final <- school_df_final[rows, ]
-sample = sample.split(school_df_final,SplitRatio = 0.75) # splits the data in the ratio mentioned in SplitRatio. After splitting marks these rows as logical TRUE and the the remaining are marked as logical FALSE
-training =subset(school_df_final,sample ==TRUE) # creates a training dataset named train1 with rows which are marked as TRUE
-testing=subset(school_df_final, sample==FALSE)
 #first we omit any remaining NA values from our data
 school_df_final<-na.omit(school_df_final) 
 school_df_final
@@ -343,14 +307,6 @@ AIC(gam5)
 
 ```{r}
 plot(gam3, all.terms = TRUE, seWithMean = TRUE)
-
-#EDA Boxplot
-ggplot(school_df_final,aes(x=region,y=growth_index_score,fill=region))+
-  geom_boxplot(position=position_dodge(1))+
-  ggtitle("Growth Index Score Distribution by Region") +
-  ylab("Growth Index Score") +
-  scale_x_discrete("Region", drop=FALSE) +
-  theme(axis.text.x=element_text(angle=45,hjust=1)) 
 ```
 
 
