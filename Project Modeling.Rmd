@@ -307,6 +307,14 @@ AIC(gam5)
 
 ```{r}
 plot(gam3, all.terms = TRUE, seWithMean = TRUE)
+
+#EDA Boxplot
+ggplot(school_df_final,aes(x=region,y=growth_index_score,fill=region))+
+  geom_boxplot(position=position_dodge(1))+
+  ggtitle("Growth Index Score Distribution by Region") +
+  ylab("Growth Index Score") +
+  scale_x_discrete("Region", drop=FALSE) +
+  theme(axis.text.x=element_text(angle=45,hjust=1)) 
 ```
 
 
