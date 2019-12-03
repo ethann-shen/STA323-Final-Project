@@ -237,8 +237,6 @@ school_df_final <- school_df_final[rows, ]
 sample = sample.split(school_df_final,SplitRatio = 0.75) # splits the data in the ratio mentioned in SplitRatio. After splitting marks these rows as logical TRUE and the the remaining are marked as logical FALSE
 training =subset(school_df_final,sample ==TRUE) # creates a training dataset named train1 with rows which are marked as TRUE
 testing=subset(school_df_final, sample==FALSE)
-train = na.omit(training)
-test = na.omit(testing)
 ```
 
 
