@@ -120,7 +120,7 @@ ggplot(school_df_final, aes(x = growth_index_score, fill = region)) +
   labs(title = "Histogram of Growth Index Score by Region", 
        x = "Growth Index Score", 
        y = "Count") +
-  scale_fill_manual(values = col.pal.2) + 
+  scale_fill_manual(values = col.pal.2) +  
   theme_bw() 
 ```
 
