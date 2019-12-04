@@ -377,7 +377,7 @@ final_school_data <- final_school_data %>%
     percent_ACTRD_meeting = as.numeric(percent_ACTRD_meeting),
     percent_ACTSC_meeting = as.numeric(percent_ACTSC_meeting),
     percent_ACTWR_meeting = as.numeric(percent_ACTWR_meeting),
-    
+
     percent_white = as.numeric(percent_white*100),
     percent_male = as.numeric(percent_male*100),
     percent_eds = as.numeric(percent_eds*100),

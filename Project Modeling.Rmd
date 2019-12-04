@@ -88,7 +88,7 @@ avg.dem.dist <- school_df_final %>%
            mean_percent_ACT) %>%
   gather(variable, value, -region) 
 
-ggplot(avg.dem.dist, aes(x = region, y = value * 100, fill = reorder(variable, -value))) + 
+ggplot(avg.dem.dist, aes(x = region, y = value, fill = reorder(variable, -value))) + 
   geom_bar(stat = "identity", position = "dodge") + 
   scale_fill_manual(name = "Demographic Label", 
                     labels = c("White", "ACT", "Male", "Economically Disadvantaged", "Students with Disabilities"),
@@ -227,11 +227,7 @@ pairs.panels(numeric.cols[c(ncol(numeric.cols), 9:11)],
              ellipses = FALSE,
              hist.col = "#80b1d3")
 
-pairs(numeric.cols[c(ncol(numeric.cols), 5:8)],
-      lower.panel = NULL)
 
-pairs(numeric.cols[c(ncol(numeric.cols), 9:11)],
-      lower.panel = NULL)
 
 ```
 
@@ -344,13 +340,19 @@ school_df_final$region <- as.factor(school_df_final$region)
 gam1 <- mgcv::gam(growth_index_score ~ s(percent_ACT_meeting) + s(percent_white) + region, data = school_df_final)
 gam2 <- mgcv::gam(growth_index_score ~ percent_ACT_meeting + s(percent_white) + region, data = school_df_final)
 gam3 <-  mgcv::gam(growth_index_score ~ s(percent_ACT_meeting) + percent_white + region, data = school_df_final)
-gam4 <-  mgcv::gam(growth_index_score ~ s(percent_ACT_meeting) + percent_white + region + region*percent_ACT_meeting, data = school_df_final)
-gam5 <-  mgcv::gam(growth_index_score ~ s(percent_ACT_meeting) + s(percent_white) + region + region*percent_ACT_meeting, data = school_df_final)
+gam4 <- mgcv::gam(growth_index_score ~ s(percent_ACT_meeting, by = region) + s(percent_white, by = region) + region, data = school_df_final)
+gam5 <- mgcv::gam(growth_index_score ~ s(percent_ACT_meeting, by = region) + percent_white + region, data = school_df_final)
+gam6 <- mgcv::gam(growth_index_score ~ s(percent_ACT_meeting, by = region) + s(percent_white) + region, data = school_df_final)
+
+
 AIC(gam1)
 AIC(gam2)
 AIC(gam3)
 AIC(gam4)
 AIC(gam5)
+AIC(gam6)
+
+plot(gam6, all.terms = TRUE, seWithMean = TRUE, pages = 1)
 
 ```
 
