@@ -5,15 +5,14 @@ date: "11/23/2019"
 output: html_document
 ---
 
-```{r, echo = FALSE, include = FALSE} 
+```{r, echo = FALSE, include = FALSE}
 # Installing packages
 pkgTest <- function(x) {
   if (!require(x,character.only = TRUE)) {
     install.packages(x,dep=TRUE) 
   }
 }
-pkgs <- c("tidyverse", "ggplot2", "ggpubr", "cowplot", "reshape2", "caTools", "MASS", "psych", 
-          "gridExtra")
+pkgs <- c("tidyverse", "ggplot2", "ggpubr", "cowplot", "reshape2", "caTools", "MASS", "psych")
 
 for (pkg in pkgs) {
   pkgTest(pkg)
@@ -35,6 +34,7 @@ library(e1071)
 library(caret)
 library(psych)
 library(randomForest)
+<<<<<<< HEAD
 library(gridExtra)
 library(grid)
 library(jtools)
@@ -42,6 +42,8 @@ library(jtools)
 
 ggplot2::theme_set(ggplot2::theme_bw())
 knitr::opts_chunk$set(fig.align = 'center')
+=======
+>>>>>>> df2e841ccd3d2dd4f85b6418ed4bc0f6157745c7
 ```
 
 ```{r message = FALSE}
@@ -99,10 +101,8 @@ ggplot(avg.dem.dist, aes(x = region, y = value, fill = reorder(variable, -value)
   labs(title = "Average Demographic Distribution by Region", 
        x = "Region", 
        y = "Percent") + 
-  
-  theme_bw() + 
+  theme_minimal() + 
   rotate_x_text(angle = 50)
-
 ```
 
 ```{r}
@@ -127,32 +127,13 @@ col.pal.2 = c('#66c2a5',
               '#e5c494',
               '#b3b3b3')
 
-p1 <- ggplot(school_df_final, aes(x = growth_index_score, fill = region)) + 
+ggplot(school_df_final, aes(x = growth_index_score, fill = region)) + 
   geom_histogram(binwidth = 0.9, show.legend = FALSE) + 
   facet_wrap(~region, nrow = 4) + 
-  labs(subtitle = "by Region") +
-  scale_fill_manual(values = col.pal.2) + 
-  theme_bw() +
-  theme(axis.title.x=element_blank(),
-        axis.title.y=element_blank())
-
-
-
-p2 <- ggplot(school_df_final, aes(x = growth_index_score)) + 
-  geom_histogram(binwidth = 0.9, show.legend = FALSE, col = "black", fill = "#74a9cf") +
-  labs(y = "Count")+ 
-  theme_bw() + 
-  theme(axis.title.x=element_blank(),
-        axis.title.y=element_blank())
-
-grid.arrange(arrangeGrob(plot_grid(p2,p1,ncol=2), 
-                         top = textGrob("Histograms of Growth Index Score",gp=gpar(fontsize=15)), 
-                         left = textGrob("Count",gp=gpar(fontsize=11), rot = 90),
-                         bottom = textGrob("Growth Index Score",gp=gpar(fontsize=11))))
   labs(title = "Histogram of Growth Index Score by Region", 
        x = "Growth Index Score", 
        y = "Count") +
-  scale_fill_manual(values = col.pal.2) +  
+  scale_fill_manual(values = col.pal.2) + 
   theme_bw() 
 ```
 
@@ -203,7 +184,7 @@ ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) +
   scale_fill_gradient2(low = "#edf8b1", mid = "#7fcdbb", high = "#2c7fb8", 
                        midpoint = (min(cor.ACT) + 1)/2, limit = c(min(cor.ACT),1), space = "Lab", 
                        name="Correlation") + 
-  theme_bw() +
+  theme_minimal() +
   rotate_x_text(angle = 50) 
 ```
 
@@ -211,21 +192,21 @@ ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) +
 numeric.cols <- school_df_final[ , purrr::map_lgl(school_df_final, is.numeric)]
 
 pairs.panels(numeric.cols[c(ncol(numeric.cols), 1:4)],
-             smooth = FALSE,
-             pch = 1,
-             ellipses = FALSE,
-             hist.col = "#80b1d3") 
+                    smooth = FALSE,
+                    pch = 1,
+                    ellipses = FALSE,
+                    hist.col = "#80b1d3")
 pairs.panels(numeric.cols[c(ncol(numeric.cols), 5:8)],
-             smooth = FALSE,
-             pch = 1,
-             ellipses = FALSE,
-             hist.col = "#80b1d3")
+                    smooth = FALSE,
+                    pch = 1,
+                    ellipses = FALSE,
+                    hist.col = "#80b1d3")
 
 pairs.panels(numeric.cols[c(ncol(numeric.cols), 9:11)],
-             smooth = FALSE,
-             pch = 1,
-             ellipses = FALSE,
-             hist.col = "#80b1d3")
+                    smooth = FALSE,
+                    pch = 1,
+                    ellipses = FALSE,
+                    hist.col = "#80b1d3")
 
 
 
@@ -250,6 +231,9 @@ school_df_final$growth_status <- as.factor(school_df_final$growth_status)
 # #first we omit any remaining NA values from our data
 # school_df_final<-na.omit(school_df_final) 
 # school_df_final
+#first we omit any remaining NA values from our data
+school_df_final<-na.omit(school_df_final) 
+school_df_final
 ```
 
 #### Regression
@@ -322,6 +306,8 @@ ggplot(data=school_df_final, aes(x=percent_ACT_meeting ,y=growth_index_score, co
        x = "% Meeting ACT Benchmark",
        y = "Growth Index Score") + 
   scale_color_manual(values = col.pal.2, name = "Region")
+ggplot(data=school_df_final, aes(x=percent_ACT_meeting ,y=growth_index_score, color= region)) + 
+  geom_smooth(se = F, method = "lm") + labs(title = "Growth Index Score vs. Percent Meeting ACT Standards by Region") 
 
 ```
 
@@ -368,6 +354,7 @@ ggplot(school_df_final,aes(x=region,y=growth_index_score,fill=region))+
   scale_fill_manual(values = col.pal.2, name = "Region") + 
   theme(axis.text.x=element_text(angle=45,hjust=1)) 
   
+plot(gam6, all.terms = TRUE, seWithMean = TRUE)
 ```
 
 
@@ -403,15 +390,18 @@ reshaped.predictions %>%
 
 ```{r}
 ggplot(reshaped.predictions, aes(x = percent_white, y = Probability, colour = Level)) +
-  geom_smooth()
+  geom_smooth(se = F) + 
+  labs(title = "Probability of Meeting Standards by Percent White") + theme_bw()
 
 
 ggplot(reshaped.predictions, aes(x = percent_ACT_meeting, y = Probability, colour = Level)) +
-  geom_smooth()
+  geom_smooth(se = F) + 
+  labs(title = "Probability of Meeting Standards by Percent Meeting ACT Standards") + theme_bw()
 
 ggplot(reshaped.predictions, aes(x = region, y = Probability, fill = Level)) +
   geom_bar(stat = "identity", position = "fill") + theme_bw() + 
-  rotate_x_text(angle = 50)
+  rotate_x_text(angle = 50) + 
+  labs(title = "Probability of Meeting Standards by Region")
 
 
 ```
