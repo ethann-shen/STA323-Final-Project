@@ -34,7 +34,6 @@ library(e1071)
 library(caret)
 library(psych)
 library(randomForest)
-<<<<<<< HEAD
 library(gridExtra)
 library(grid)
 library(jtools)
@@ -42,8 +41,6 @@ library(jtools)
 
 ggplot2::theme_set(ggplot2::theme_bw())
 knitr::opts_chunk$set(fig.align = 'center')
-=======
->>>>>>> df2e841ccd3d2dd4f85b6418ed4bc0f6157745c7
 ```
 
 ```{r message = FALSE}
