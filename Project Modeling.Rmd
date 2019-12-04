@@ -276,7 +276,7 @@ Visualizing interactions
 
 ```{r}
 ggplot(data=school_df_final, aes(x=percent_ACT_meeting ,y=growth_index_score, color= region)) + 
-  geom_smooth(se = F, method = "lm")
+  geom_smooth(se = F, method = "lm") + labs(title = "Growth Index Score vs. Percent Meeting ACT Standards by Region") 
 
 ```
 
@@ -295,18 +295,22 @@ school_df_final$region <- as.factor(school_df_final$region)
 gam1 <- mgcv::gam(growth_index_score ~ s(percent_ACT_meeting) + s(percent_white) + region, data = school_df_final)
 gam2 <- mgcv::gam(growth_index_score ~ percent_ACT_meeting + s(percent_white) + region, data = school_df_final)
 gam3 <-  mgcv::gam(growth_index_score ~ s(percent_ACT_meeting) + percent_white + region, data = school_df_final)
-gam4 <-  mgcv::gam(growth_index_score ~ s(percent_ACT_meeting) + percent_white + region + region*percent_ACT_meeting, data = school_df_final)
-gam5 <-  mgcv::gam(growth_index_score ~ s(percent_ACT_meeting) + s(percent_white) + region + region*percent_ACT_meeting, data = school_df_final)
+gam4 <- mgcv::gam(growth_index_score ~ s(percent_ACT_meeting, by = region) + s(percent_white, by = region) + region, data = school_df_final)
+gam5 <- mgcv::gam(growth_index_score ~ s(percent_ACT_meeting, by = region) + percent_white + region, data = school_df_final)
+gam6 <- mgcv::gam(growth_index_score ~ s(percent_ACT_meeting, by = region) + s(percent_white) + region, data = school_df_final)
+
+
 AIC(gam1)
 AIC(gam2)
 AIC(gam3)
 AIC(gam4)
 AIC(gam5)
+AIC(gam6)
 
 ```
 
 ```{r}
-plot(gam3, all.terms = TRUE, seWithMean = TRUE)
+plot(gam6, all.terms = TRUE, seWithMean = TRUE, pages = 1)
 ```
 
 
