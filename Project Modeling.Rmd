@@ -310,7 +310,7 @@ AIC(gam6)
 ```
 
 ```{r}
-plot(gam6, all.terms = TRUE, seWithMean = TRUE, pages = 1)
+plot(gam6, all.terms = TRUE, seWithMean = TRUE)
 ```
 
 
@@ -346,15 +346,18 @@ reshaped.predictions %>%
 
 ```{r}
 ggplot(reshaped.predictions, aes(x = percent_white, y = Probability, colour = Level)) +
-  geom_smooth()
+  geom_smooth(se = F) + 
+  labs(title = "Probability of Meeting Standards by Percent White") + theme_bw()
 
 
 ggplot(reshaped.predictions, aes(x = percent_ACT_meeting, y = Probability, colour = Level)) +
-  geom_smooth()
+  geom_smooth(se = F) + 
+  labs(title = "Probability of Meeting Standards by Percent Meeting ACT Standards") + theme_bw()
 
 ggplot(reshaped.predictions, aes(x = region, y = Probability, fill = Level)) +
   geom_bar(stat = "identity", position = "fill") + theme_bw() + 
-  rotate_x_text(angle = 50)
+  rotate_x_text(angle = 50) + 
+  labs(title = "Probability of Meeting Standards by Region")
 
 
 ```
