@@ -10,8 +10,7 @@ Assumptions:
 1. <5% or >95% meet benchmark, those just become 5 and 95% respectively
 2. if a school doens't include data about white, 1 - black and hispanic = white 
 3. junior class demographic is represntative of school (ACT)
-4. work key is senior class demographic, also representative 
-5. not assuming a gender binary 
+5.  assuming a gender binary 
 6. percent met are based on subject composite score 
 
 
@@ -38,13 +37,13 @@ library(mice)
 metStandards <- read.csv("met_standards.csv")
 metStandards <- metStandards %>%
   filter(Subgroup == "All Students", Grade.Span == "09-12") %>%
-  select(School.Name, State.Board.Region, School.Growth.Status, School.Growth.Index.Score)
+  dplyr::select(School.Name, State.Board.Region, School.Growth.Status, School.Growth.Index.Score)
 metStandards[] <- lapply(metStandards, function(x) if(is.factor(x)) as.character(x) else x)
 
 act <- read.csv("act_data.csv")
 act <- act %>%
   filter(Subgroup == "All Students", Grade.Span == "09-12", ACT.Subtest.or.Composite == "ACT composite score of 17 or higher") %>%
-  select(School.Name, School.Code, Percent.Meeting.Benchmark.or.Standard, Missed.Days.due.to.Hurricane.Florence)
+  dplyr::select(School.Name, School.Code, Percent.Meeting.Benchmark.or.Standard, Missed.Days.due.to.Hurricane.Florence)
 act[] <- lapply(act, function(x) if(is.factor(x)) as.character(x) else x)
 
 SCHOOLINFO <- inner_join(act, metStandards, by = "School.Name")
@@ -103,11 +102,17 @@ ACTWR <- school_data %>%
   distinct(school_code, school_name, subject, total_pct) %>%
   spread(subject, total_pct)
 
+AWA <- school_data %>%
+  filter(subject == "AWA", subgroup == "ALL") %>%
+  distinct(school_code, school_name, subject, total_pct) %>%
+  spread(subject, total_pct)
+        
 en.ma <- merge(ACTEN, ACTMA, by = c("school_code", "school_name"), all = TRUE) 
 en.ma.rd <- merge(en.ma, ACTRD, by = c("school_code", "school_name"), all = TRUE) 
 en.ma.rd.sc <- merge(en.ma.rd, ACTSC, by = c("school_code", "school_name"), all = TRUE) 
 ACT.subjects <- merge(en.ma.rd.sc, ACTWR, by = c("school_code", "school_name"), all = TRUE) 
-ACT.subjects[] <- lapply(ACT.subjects, function(x) if(is.factor(x)) as.character(x) else x)
+ACT.AWA <- merge(ACT.subjects, AWA, by = c("school_code", "school_name"), all = TRUE)
+ACT.AWA[] <- lapply(ACT.AWA, function(x) if(is.factor(x)) as.character(x) else x)
 
 ```
 
@@ -340,7 +345,7 @@ race.gender.ed.disability <- merge(race.gender.ed, disability.data, by = c("scho
 
 race.gender.ed.disability.title_1 <- merge(race.gender.ed.disability, title_1.df, by = c("school_code", "school_name"), all = TRUE)
 
-race.gender.ed.disability.title_1.actsubjects <- merge(race.gender.ed.disability.title_1, ACT.subjects, by = c("school_code", "school_name"), all = TRUE)
+race.gender.ed.disability.title_1.actsubjects <- merge(race.gender.ed.disability.title_1, ACT.AWA, by = c("school_code", "school_name"), all = TRUE)
 
 final_school_data <- merge(race.gender.ed.disability.title_1.actsubjects, SCHOOLINFO, by = c("school_code", "school_name"), all = TRUE)
 
@@ -371,7 +376,13 @@ final_school_data <- final_school_data %>%
     percent_ACTMA_meeting = as.numeric(percent_ACTMA_meeting),
     percent_ACTRD_meeting = as.numeric(percent_ACTRD_meeting),
     percent_ACTSC_meeting = as.numeric(percent_ACTSC_meeting),
-    percent_ACTWR_meeting = as.numeric(percent_ACTWR_meeting)) %>%
+    percent_ACTWR_meeting = as.numeric(percent_ACTWR_meeting),
+    
+    percent_white = as.numeric(percent_white*100),
+    percent_male = as.numeric(percent_male*100),
+    percent_eds = as.numeric(percent_eds*100),
+    percent_swd = as.numeric(percent_swd*100)
+    ) %>%
   filter(!is.na(growth_index_score),
          !is.na(growth_status))
 ```

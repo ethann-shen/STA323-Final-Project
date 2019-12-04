@@ -37,6 +37,11 @@ library(psych)
 library(randomForest)
 library(gridExtra)
 library(grid)
+library(jtools)
+
+
+ggplot2::theme_set(ggplot2::theme_bw())
+knitr::opts_chunk$set(fig.align = 'center')
 ```
 
 ```{r message = FALSE}
@@ -65,25 +70,28 @@ heh = c(
   "#1f78b4",
   "#fdbf6f",
   "#33a02c",
-  "#fb9a99"
+  "#fb9a99",
+ "#7570b3"
 )
 avg.dem.dist <- school_df_final %>%
   group_by(region) %>%
   mutate(mean_percent_white = mean(percent_white, na.rm = TRUE),
          mean_percent_male = mean(percent_male, na.rm = TRUE),
          mean_percent_eds = mean(percent_eds, na.rm = TRUE),
-         mean_percent_swd = mean(percent_swd, na.rm = TRUE)) %>%
+         mean_percent_swd = mean(percent_swd, na.rm = TRUE),
+         mean_percent_ACT = mean(percent_ACT_meeting, na.rm = TRUE)) %>%
   distinct(region, 
            mean_percent_white,
            mean_percent_male,
            mean_percent_eds,
-           mean_percent_swd) %>%
+           mean_percent_swd,
+           mean_percent_ACT) %>%
   gather(variable, value, -region) 
 
 ggplot(avg.dem.dist, aes(x = region, y = value * 100, fill = reorder(variable, -value))) + 
   geom_bar(stat = "identity", position = "dodge") + 
   scale_fill_manual(name = "Demographic Label", 
-                    labels = c("White", "Male", "Economically Disadvantaged", "Students with Disabilities"),
+                    labels = c("White", "ACT", "Male", "Economically Disadvantaged", "Students with Disabilities"),
                     values = heh#c("#a1dab4", "#41b6c4", "#225ea8", "#253494")
   ) + 
   #  scale_fill_discrete(name = "Demographic Label", labels = c("White", "Male", "EDS", "SWD")) + 
@@ -237,15 +245,15 @@ school_df_final$title_1 <- as.factor(school_df_final$title_1)
 school_df_final$region <- as.factor(school_df_final$region)
 school_df_final$growth_status <- as.factor(school_df_final$growth_status)
 
-set.seed(123)   #  set seed to ensure you always have same random numbers generated
-rows <- sample(nrow(school_df_final))
-school_df_final <- school_df_final[rows, ]
-sample = sample.split(school_df_final,SplitRatio = 0.75) # splits the data in the ratio mentioned in SplitRatio. After splitting marks these rows as logical TRUE and the the remaining are marked as logical FALSE
-training =subset(school_df_final,sample ==TRUE) # creates a training dataset named train1 with rows which are marked as TRUE
-testing=subset(school_df_final, sample==FALSE)
-#first we omit any remaining NA values from our data
-school_df_final<-na.omit(school_df_final) 
-school_df_final
+# set.seed(123)   #  set seed to ensure you always have same random numbers generated
+# rows <- sample(nrow(school_df_final))
+# school_df_final <- school_df_final[rows, ]
+# sample = sample.split(school_df_final,SplitRatio = 0.75) # splits the data in the ratio mentioned in SplitRatio. After splitting marks these rows as logical TRUE and the the remaining are marked as logical FALSE
+# training =subset(school_df_final,sample ==TRUE) # creates a training dataset named train1 with rows which are marked as TRUE
+# testing=subset(school_df_final, sample==FALSE)
+# #first we omit any remaining NA values from our data
+# school_df_final<-na.omit(school_df_final) 
+# school_df_final
 ```
 
 #### Regression
@@ -306,13 +314,18 @@ growth_index_score ~ percent_white + percent_ACT_meeting  + region +  region*per
 
 ```{r}
 summary(linear.fit9)
+plot_summs(linear.fit9, scale = TRUE, plot.distributions = TRUE)
 ```
 
 Visualizing interactions
 
 ```{r}
-ggplot(data=school_df_final, aes(x=percent_ACT_meeting ,y=growth_index_score, color= region)) + 
-  geom_smooth(se = F, method = "lm")
+ggplot(data=school_df_final, aes(x=percent_ACT_meeting ,y=growth_index_score, color = region)) + 
+  geom_smooth(se = F, method = "lm") + 
+  labs(title = "Growth Index Score vs. Percent Meeting ACT Benchmark",
+       x = "% Meeting ACT Benchmark",
+       y = "Growth Index Score") + 
+  scale_color_manual(values = col.pal.2, name = "Region")
 
 ```
 
@@ -349,8 +362,10 @@ ggplot(school_df_final,aes(x=region,y=growth_index_score,fill=region))+
   geom_boxplot(position=position_dodge(1))+
   ggtitle("Growth Index Score Distribution by Region") +
   ylab("Growth Index Score") +
-  scale_x_discrete("Region", drop=FALSE) +
+  scale_x_discrete("Region", drop=FALSE) + 
+  scale_fill_manual(values = col.pal.2, name = "Region") + 
   theme(axis.text.x=element_text(angle=45,hjust=1)) 
+  
 ```
 
 
