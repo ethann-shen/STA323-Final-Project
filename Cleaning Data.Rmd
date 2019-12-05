@@ -5,15 +5,6 @@ date: "11/20/2019"
 output: html_document
 ---
 
-Assumptions: 
-
-1. <5% or >95% meet benchmark, those just become 5 and 95% respectively
-2. if a school doens't include data about white, 1 - black and hispanic = white 
-3. junior class demographic is represntative of school (ACT)
-5.  assuming a gender binary 
-6. percent met are based on subject composite score 
-
-
 ```{r, echo = FALSE, include = FALSE}
 # Installing packages
 pkgTest <- function(x) {
@@ -33,14 +24,22 @@ library(tidyverse)
 library(mice)
 ```
 
+## Reading Data 
+
 ```{r}
 metStandards <- read.csv("met_standards.csv")
+act <- read.csv("act_data.csv")
+school_data <- read.csv("school_data.csv")
+```
+
+## Joining Standards & ACT Data 
+
+```{r}
 metStandards <- metStandards %>%
   filter(Subgroup == "All Students", Grade.Span == "09-12") %>%
   dplyr::select(School.Name, State.Board.Region, School.Growth.Status, School.Growth.Index.Score)
 metStandards[] <- lapply(metStandards, function(x) if(is.factor(x)) as.character(x) else x)
 
-act <- read.csv("act_data.csv")
 act <- act %>%
   filter(Subgroup == "All Students", Grade.Span == "09-12", ACT.Subtest.or.Composite == "ACT composite score of 17 or higher") %>%
   dplyr::select(School.Name, School.Code, Percent.Meeting.Benchmark.or.Standard, Missed.Days.due.to.Hurricane.Florence)
@@ -54,25 +53,7 @@ SCHOOLINFO <- SCHOOLINFO %>%
          school_code = School.Code)
 ```
 
-
-```{r}
-school_data <- read.csv("school_data.csv")
-
-school_data <- school_data %>%
-  filter(!is.na(grade_span),
-         grade_span == "09-12") 
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
-Covariates
-- Region (sbe_region)
-- title 1 status
-- Missed Days (?)
-- Class Size
-- Percentage Subgroup
-
-- Percent ACT score met standard
+## Extracting ACT Information 
 
 ```{r}
 ACTEN <- school_data %>%
@@ -101,27 +82,28 @@ ACTWR <- school_data %>%
   filter(subject == "ACTWR", subgroup == "ALL") %>%
   distinct(school_code, school_name, subject, total_pct) %>%
   spread(subject, total_pct)
+```
 
-AWA <- school_data %>%
-  filter(subject == "AWA", subgroup == "ALL") %>%
-  distinct(school_code, school_name, subject, total_pct) %>%
-  spread(subject, total_pct)
-        
+## Joining ACT Data 
+
+```{r}
 en.ma <- merge(ACTEN, ACTMA, by = c("school_code", "school_name"), all = TRUE) 
 en.ma.rd <- merge(en.ma, ACTRD, by = c("school_code", "school_name"), all = TRUE) 
 en.ma.rd.sc <- merge(en.ma.rd, ACTSC, by = c("school_code", "school_name"), all = TRUE) 
 ACT.subjects <- merge(en.ma.rd.sc, ACTWR, by = c("school_code", "school_name"), all = TRUE) 
-ACT.AWA <- merge(ACT.subjects, AWA, by = c("school_code", "school_name"), all = TRUE)
-ACT.AWA[] <- lapply(ACT.AWA, function(x) if(is.factor(x)) as.character(x) else x)
-
+ACT.subjects[] <- lapply(ACT.subjects, function(x) if(is.factor(x)) as.character(x) else x)
 ```
 
-```{r}
-ACT <- school_data %>%
-  filter(subject == "ACT") 
+## School Data 
 
-ACT <- ACT %>%
-  filter(school_name != "Dare Learning Academy")
+```{r}
+school_data <- school_data %>%
+  filter(!is.na(grade_span),
+         grade_span == "09-12") 
+
+ACT <- school_data %>%
+  filter(subject == "ACT",
+         school_name != "Dare Learning Academy")
 
 # Title 1 Status
 title_1.df <- ACT %>%
@@ -130,8 +112,9 @@ title_1.df <- ACT %>%
 title_1.df[] <- lapply(title_1.df, function(x) if(is.factor(x)) as.character(x) else x)
 ```
 
+## Calculating Race Percentages 
+
 ```{R}
-#FOR RACE
 school.codes <- unique(ACT$school_code)
 
 racedata <- data.frame()
@@ -177,8 +160,9 @@ for (code in school.codes){
 }
 ```
 
+## Calculating Gender Percentages 
+
 ```{r}
-#GENDER
 names <- unique(ACT$school_code)
 genderdata <- data.frame()
 for (code in school.codes){
@@ -188,8 +172,7 @@ for (code in school.codes){
   sname = ALL$school_name
   total_number = ALL$den
   
-  #computing stuff for gender
-  
+
   gender <- ACT %>%
     filter(school_code == code,
            subgroup == "MALE" | subgroup == "FEM")
@@ -228,8 +211,9 @@ for (code in school.codes){
 }
 ```
 
+## Calculating Economically Disadvantaged Percentage
+
 ```{r}
-# Economically Disadvantaged
 ed.data <- data.frame()
 for (code in school.codes){
   
@@ -280,6 +264,8 @@ for (code in school.codes){
   ed.data[] <- lapply(ed.data, function(x) if(is.factor(x)) as.character(x) else x)
 }
 ```
+
+## Calculating Disability Percentage
 
 ```{r}
 # Disabilities 
@@ -335,6 +321,7 @@ for (code in school.codes){
 }
 ```
 
+## Joining All Data Frames
 
 ```{r, warning = FALSE}
 race.gender <- merge(racedata, genderdata, by = c("school_code", "school_name"), all = TRUE) 
@@ -345,10 +332,14 @@ race.gender.ed.disability <- merge(race.gender.ed, disability.data, by = c("scho
 
 race.gender.ed.disability.title_1 <- merge(race.gender.ed.disability, title_1.df, by = c("school_code", "school_name"), all = TRUE)
 
-race.gender.ed.disability.title_1.actsubjects <- merge(race.gender.ed.disability.title_1, ACT.AWA, by = c("school_code", "school_name"), all = TRUE)
+race.gender.ed.disability.title_1.actsubjects <- merge(race.gender.ed.disability.title_1, ACT.subjects, by = c("school_code", "school_name"), all = TRUE)
 
 final_school_data <- merge(race.gender.ed.disability.title_1.actsubjects, SCHOOLINFO, by = c("school_code", "school_name"), all = TRUE)
+```
 
+## Reformatting Data Frame 
+
+```{r}
 final_school_data <- final_school_data %>%
   rename(percent_ACT_meeting = Percent.Meeting.Benchmark.or.Standard,
          percent_ACTEN_meeting = ACTEN,
@@ -387,12 +378,9 @@ final_school_data <- final_school_data %>%
          !is.na(growth_status))
 ```
 
-
 ### Imputation
 
 ```{r}
-#final_school_data[complete.cases(final_school_data), ]
-
 # Plot missing proportions
 missing.prop <- apply(final_school_data, MARGIN = 2, FUN = function(x) { sum(is.na(x)) })
 missing.prop <- missing.prop / dim(final_school_data)[1]
@@ -416,9 +404,9 @@ final_school_data_imp <- parlmice(final_school_data, m=5, printFlag=FALSE, maxit
 school_df_final <- final_school_data_imp$data
 ```
 
+## Final Dataset 
+
 ```{r}
 write_csv(school_df_final, "school_df_final.csv")
+head(school_df_final)
 ```
-
-
-We only have 390 complete cases. With such a limited sample size, we cannot afford to do complete case analysis. We do multiple imputation to handle missing data. 
