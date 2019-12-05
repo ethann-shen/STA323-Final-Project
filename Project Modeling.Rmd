@@ -1,9 +1,11 @@
 ---
 title: "Project Modeling"
 author: "Ethan Shen, Steven Herrera, Malavi Ravindran, Austin Jia"
-date: "11/23/2019"
-output: html_document
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: rmdformats::readthedown
 ---
+
+# Loading Packages 
 
 ```{r, echo = FALSE, include = FALSE}
 # Installing packages
@@ -19,7 +21,7 @@ for (pkg in pkgs) {
 }
 ```
 
-```{r}
+```{r message = FALSE}
 library(tidyverse)
 library(ggplot2)
 library(ggpubr)
@@ -43,58 +45,82 @@ ggplot2::theme_set(ggplot2::theme_bw())
 knitr::opts_chunk$set(fig.align = 'center')
 ```
 
+# Reading Data 
+
 ```{r message = FALSE}
 school_df_final <- read_csv("school_df_final.csv")
 school_df_final <- school_df_final %>%
   na.omit()
 ```
 
-### Visualizations
+# EDA
+
+## Response Variable 
 
 ```{r}
-yes = c("#66c2a5",
-        "#fc8d62",
-        "#8da0cb",
-        "#e78ac3")
+col.pal.2 = c('#66c2a5',
+            '#fc8d62',
+            '#8da0cb',
+            '#e78ac3',
+            '#a6d854',
+            '#ffd92f',
+            '#e5c494',
+            '#b3b3b3')
+
+p1 <- ggplot(school_df_final, aes(x = growth_index_score)) + 
+   geom_histogram(binwidth = 0.9, show.legend = FALSE, col = "black", fill = "#74a9cf") +
+   labs(y = "Count")+ 
+   theme_bw() + 
+   theme(axis.title.x=element_blank(),
+         axis.title.y=element_blank())
+
+p2 <- ggplot(school_df_final, aes(x = growth_index_score, fill = region)) + 
+   geom_histogram(binwidth = 0.9, show.legend = FALSE) + 
+   facet_wrap(~region, nrow = 4) + 
+   labs(subtitle = "by Region",
+        x = "Growth Index Score", 
+        y = "Count") +
+   scale_fill_manual(values = col.pal.2) + 
+   theme_bw() +
+   theme(axis.title.x=element_blank(),
+         axis.title.y=element_blank())
 
 
-ya = c(
-  "#8dd3c7",
-  "#ffffb3",
-  "#bebada",
-  "#fb8072"
-)
+ grid.arrange(arrangeGrob(plot_grid(p1,p2,ncol=2), 
+                          top = textGrob("Histograms of Growth Index Score",gp=gpar(fontsize=15)), 
+                          left = textGrob("Count",gp=gpar(fontsize=11), rot = 90),
+                          bottom = textGrob("Growth Index Score",gp=gpar(fontsize=11))))
+```
 
-heh = c(
+We first examine one of our response variable, and see that the growth score index as a whole and across the regions is approximately normally distributed, which means we do not have to perform transformations on our response variable.
+
+## Demographics Across Regions
+
+```{r}
+col.pal = c(
   "#1f78b4",
   "#fdbf6f",
   "#33a02c",
-  "#fb9a99",
- "#7570b3"
+  "#fb9a99"
 )
 avg.dem.dist <- school_df_final %>%
   group_by(region) %>%
   mutate(mean_percent_white = mean(percent_white, na.rm = TRUE),
          mean_percent_male = mean(percent_male, na.rm = TRUE),
          mean_percent_eds = mean(percent_eds, na.rm = TRUE),
-         mean_percent_swd = mean(percent_swd, na.rm = TRUE),
-         mean_percent_ACT = mean(percent_ACT_meeting, na.rm = TRUE)) %>%
+         mean_percent_swd = mean(percent_swd, na.rm = TRUE)) %>%
   distinct(region, 
            mean_percent_white,
            mean_percent_male,
            mean_percent_eds,
-           mean_percent_swd,
-           mean_percent_ACT) %>%
+           mean_percent_swd) %>%
   gather(variable, value, -region) 
 
 ggplot(avg.dem.dist, aes(x = region, y = value, fill = reorder(variable, -value))) + 
   geom_bar(stat = "identity", position = "dodge") + 
   scale_fill_manual(name = "Demographic Label", 
-                    labels = c("White", "ACT", "Male", "Economically Disadvantaged", "Students with Disabilities"),
-                    values = heh#c("#a1dab4", "#41b6c4", "#225ea8", "#253494")
-  ) + 
-  #  scale_fill_discrete(name = "Demographic Label", labels = c("White", "Male", "EDS", "SWD")) + 
-  
+                    labels = c("White", "Male", "Economically Disadvantaged", "Students with Disabilities"),
+                    values = col.pal) + 
   labs(title = "Average Demographic Distribution by Region", 
        x = "Region", 
        y = "Percent") + 
@@ -102,46 +128,34 @@ ggplot(avg.dem.dist, aes(x = region, y = value, fill = reorder(variable, -value)
   rotate_x_text(angle = 50)
 ```
 
-```{r}
-#TRY BOX COX. SCREEn. 
+This plot shows us some of the different average demographic percentages across the regions. We see that the percent of students with disabilities and percent of male students is about the same across all regoins. However, the other two percentages differ quite a bit across regions, with the Northwest and Western regions having over an average of 70% white students and the Sandhill region having almost 60% of economically disadvantaged students.
 
-col.pal = c("#8dd3c7",
-            "#ffffb3",
-            "#bebada",
-            "#fb8072",
-            "#80b1d3",
-            "#fdb462",
-            "#b3de69",
-            "#fccde5")
-
-
-col.pal.2 = c('#66c2a5',
-              '#fc8d62',
-              '#8da0cb',
-              '#e78ac3',
-              '#a6d854',
-              '#ffd92f',
-              '#e5c494',
-              '#b3b3b3')
-
-ggplot(school_df_final, aes(x = growth_index_score, fill = region)) + 
-  geom_histogram(binwidth = 0.9, show.legend = FALSE) + 
-  facet_wrap(~region, nrow = 4) + 
-  labs(title = "Histogram of Growth Index Score by Region", 
-       x = "Growth Index Score", 
-       y = "Count") +
-  scale_fill_manual(values = col.pal.2) + 
-  theme_bw() 
-```
-
+## Pairs Plots 
 
 ```{r}
+numeric.cols <- school_df_final[ , purrr::map_lgl(school_df_final, is.numeric)]
 
-ggplot(data = school_df_final %>% filter(!is.na(region)), aes(x = percent_white)) + 
-  geom_histogram() + 
-  facet_wrap(~region)
+pairs.panels(numeric.cols[c(ncol(numeric.cols), 1:4)],
+             smooth = FALSE,
+             pch = 1,
+             ellipses = FALSE,
+             hist.col = "#80b1d3")
+pairs.panels(numeric.cols[c(ncol(numeric.cols), 5:8)],
+             smooth = FALSE,
+             pch = 1,
+             ellipses = FALSE,
+             hist.col = "#80b1d3")
+
+pairs.panels(numeric.cols[c(ncol(numeric.cols), 9:11)],
+             smooth = FALSE,
+             pch = 1,
+             ellipses = FALSE,
+             hist.col = "#80b1d3")
 ```
 
+We then plotted pairs plots, which also show the univariate distribution of the variable, and provide a scatterplot and correlation of the bivariate relationships. For the most part, multicollinearity is not a big issue; however, some predictors (namely ones associated with the ACT subsections) are highly correlated. We dive deeper into those predictors in the following correlation matrix. 
+
+## Correlation Matrix 
 
 ```{r}
 avg <- school_df_final %>%
@@ -172,7 +186,6 @@ upper_tri <- get_upper_tri(cor.ACT)
 
 melted_cormat <- melt(upper_tri, na.rm = TRUE)
 
-
 ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
   geom_tile(color = "white") + 
   labs(title = "Correlation Matrix of ACT Subcategories", 
@@ -185,32 +198,9 @@ ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) +
   rotate_x_text(angle = 50) 
 ```
 
-```{r}
-numeric.cols <- school_df_final[ , purrr::map_lgl(school_df_final, is.numeric)]
+We see here that the ACT subcategory predictors are all very highly correlated. Thus, when moving forward with the modeling, we will only keep the overall ACT benchmark percentage (`percent_ACT_meeting`).
 
-pairs.panels(numeric.cols[c(ncol(numeric.cols), 1:4)],
-                    smooth = FALSE,
-                    pch = 1,
-                    ellipses = FALSE,
-                    hist.col = "#80b1d3")
-pairs.panels(numeric.cols[c(ncol(numeric.cols), 5:8)],
-                    smooth = FALSE,
-                    pch = 1,
-                    ellipses = FALSE,
-                    hist.col = "#80b1d3")
-
-pairs.panels(numeric.cols[c(ncol(numeric.cols), 9:11)],
-                    smooth = FALSE,
-                    pch = 1,
-                    ellipses = FALSE,
-                    hist.col = "#80b1d3")
-
-
-
-```
-
-
-### Modeling 
+# Regression Modeling 
 
 ```{r}
 #splitting data into training and testing
@@ -229,15 +219,11 @@ school_df_final$growth_status <- as.factor(school_df_final$growth_status)
 # school_df_final<-na.omit(school_df_final) 
 # school_df_final
 #first we omit any remaining NA values from our data
-school_df_final<-na.omit(school_df_final) 
-school_df_final
+# school_df_final<-na.omit(school_df_final) 
+# school_df_final
 ```
 
-#### Regression
-
-
-
-##### Linear
+## Linear
 ```{r}
 #linear model with selection- first, we are fitting a full model (except for those specific ACT variables we are cutting)
 linear.fit1 <- lm(growth_index_score ~ percent_white + percent_male + percent_eds + percent_swd + title_1 + percent_ACT_meeting + missed_school_days + region, data = school_df_final)
@@ -353,7 +339,7 @@ ggplot(school_df_final,aes(x=region,y=growth_index_score,fill=region))+
   scale_x_discrete("Region", drop=FALSE) + 
   scale_fill_manual(values = col.pal.2, name = "Region") + 
   theme(axis.text.x=element_text(angle=45,hjust=1)) 
-  
+
 plot(gam6, all.terms = TRUE, seWithMean = TRUE)
 ```
 
@@ -376,7 +362,7 @@ testing_dropped_columns <- school_df_final %>%
   dplyr::select(school_code, school_name, region, percent_white, percent_ACT_meeting, growth_status)
 testing.with.predicted.probs <- cbind(testing_dropped_columns, predict(ord.logistic, school_df_final, type = "probs"))
 reshaped.predictions <- melt(testing.with.predicted.probs, id.vars = c("school_code", "school_name", "region", "percent_white", "percent_ACT_meeting", "growth_status" ),
-  variable.name = "Level", value.name="Probability")
+                             variable.name = "Level", value.name="Probability")
 ## view first few rows
 head(reshaped.predictions)
 reshaped.predictions %>%
