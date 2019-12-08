@@ -29,9 +29,9 @@ library(cowplot)
 library(reshape2)
 library(caTools) 
 library(MASS)
-require(foreign)
-require(Hmisc)
-require(reshape2)
+library(foreign)
+library(Hmisc)
+library(reshape2)
 library(e1071)
 library(caret)
 library(psych)
@@ -39,6 +39,10 @@ library(randomForest)
 library(gridExtra)
 library(grid)
 library(jtools)
+library(lme4)
+library(loo)
+library(HLMdiag)
+
 
 
 ggplot2::theme_set(ggplot2::theme_bw())
@@ -203,24 +207,9 @@ We see here that the ACT subcategory predictors are all very highly correlated. 
 # Regression Modeling 
 
 ```{r}
-#splitting data into training and testing
-
 school_df_final$title_1 <- as.factor(school_df_final$title_1)
 school_df_final$region <- as.factor(school_df_final$region)
 school_df_final$growth_status <- as.factor(school_df_final$growth_status)
-
-# set.seed(123)   #  set seed to ensure you always have same random numbers generated
-# rows <- sample(nrow(school_df_final))
-# school_df_final <- school_df_final[rows, ]
-# sample = sample.split(school_df_final,SplitRatio = 0.75) # splits the data in the ratio mentioned in SplitRatio. After splitting marks these rows as logical TRUE and the the remaining are marked as logical FALSE
-# training =subset(school_df_final,sample ==TRUE) # creates a training dataset named train1 with rows which are marked as TRUE
-# testing=subset(school_df_final, sample==FALSE)
-# #first we omit any remaining NA values from our data
-# school_df_final<-na.omit(school_df_final) 
-# school_df_final
-#first we omit any remaining NA values from our data
-# school_df_final<-na.omit(school_df_final) 
-# school_df_final
 ```
 
 ## Linear
@@ -277,7 +266,6 @@ growth_index_score ~ percent_white + percent_ACT_meeting  + region +  region*per
 
 ```{r}
 summary(linear.fit9)
-plot_summs(linear.fit9, scale = TRUE, plot.distributions = TRUE)
 ```
 
 Visualizing interactions
@@ -296,10 +284,7 @@ ggplot(data=school_df_final, aes(x=percent_ACT_meeting ,y=growth_index_score, co
 
 ```{r}
 plot(linear.fit9)
-BIC(linear.fit9)
 ```
-
-
 
 
 ```{r}
@@ -322,31 +307,16 @@ AIC(gam4)
 AIC(gam5)
 AIC(gam6)
 
-BIC(gam6)
-
-plot(gam6, all.terms = TRUE, seWithMean = TRUE, pages = 1)
 
 ```
 
 ```{r}
-plot(gam3, all.terms = TRUE, seWithMean = TRUE)
-
-#EDA Boxplot
-ggplot(school_df_final,aes(x=region,y=growth_index_score,fill=region))+
-  geom_boxplot(position=position_dodge(1))+
-  ggtitle("Growth Index Score Distribution by Region") +
-  ylab("Growth Index Score") +
-  scale_x_discrete("Region", drop=FALSE) + 
-  scale_fill_manual(values = col.pal.2, name = "Region") + 
-  theme(axis.text.x=element_text(angle=45,hjust=1)) 
-
 plot(gam6, all.terms = TRUE, seWithMean = TRUE)
 ```
 
 
 ```{r}
 school_df_final$growth_status <- factor(school_df_final$growth_status, levels =c("Not Met","Met", "Exceeded"), ordered=TRUE)
-school_df_final
 ```
 
 
@@ -396,7 +366,86 @@ ggplot(reshaped.predictions, aes(x = region, y = Probability, fill = Level)) +
 
 ```
 
+# Hierarchical Modeling 
 
+$$
+Y_{ij} = \boldsymbol{\beta^T}X_{ij} + \boldsymbol{\gamma_j^T}Z_{ij} + \epsilon_{ij} \space, \space \epsilon_{ij} \stackrel{i.i.d}{\sim} \space N(0, \sigma^2)
+$$
+
+```{r warning = FALSE, message= FALSE}
+m1 <- lmer(formula = growth_index_score ~ 
+             percent_ACT_meeting + percent_white + percent_male + percent_eds + percent_swd + missed_school_days + title_1 + 
+             (1 + percent_ACT_meeting | region),
+           REML = F,
+           data = school_df_final)
+summ(m1, confint = TRUE, digits = 3)
+AIC(m1)
+```
+
+```{r warning = FALSE}
+m2 <- lmer(formula = growth_index_score ~ 
+              percent_ACT_meeting +  percent_white +
+             (percent_ACT_meeting | region),
+           REML = F,
+           data = school_df_final)
+summ(m2, confint = TRUE, digits = 3)
+fixef(m2)
+ranef(m2)
+AIC(m2)
+```
+
+```{r}
+a_part_pooled2 <- coef(m2)$region[,1]
+beta_part_pooled2 <- coef(m2)$region[,2]
+
+region <- school_df_final$region
+y <- school_df_final$growth_index_score
+x2 <- as.numeric(school_df_final$percent_ACT_meeting) 
+df2 <- data.frame(y, x2, region)
+df2$a_part_pooled2 <- a_part_pooled2[df2$region]
+df2$beta_part_pooled2 <- beta_part_pooled2[df2$region]
+
+ggplot(df2,
+       aes(x = x2, y = y)) + 
+  facet_wrap(~region,
+             ncol = 4) + 
+  geom_jitter(position = position_jitter(width = .05, 
+                                         height = 0), alpha = 0.6) + 
+  geom_abline(aes(intercept = a_part_pooled2,
+                  slope = beta_part_pooled2),
+              color = "purple", 
+              size = 0.7) + 
+  labs(title = "Partial Pooling Estimates",
+       x = "% Meeting ACT Benchmark",
+       y = "Growth Index Score") +
+  theme_bw() 
+plot_summs(m2, scale = TRUE, inner_ci_level = .95, plot.distributions = TRUE)
+```
+
+```{r}
+resid <- HLMresid(m2, level = 1, type = "LS", standardize = TRUE)
+
+Index <- seq(1, nrow(resid))
+
+data.frame(resid = resid$LS.resid, 
+           Index = Index) %>%
+
+ggplot(aes(x = Index, y = resid)) + 
+  geom_point() + 
+  labs(title = "Distribution of Residuals",
+       y="Residuals") + 
+  theme_bw() + 
+  geom_hline(yintercept = 0, col = "red")
+
+data.frame(resid = resid$LS.resid, 
+           Index = Index) %>%
+ggplot(aes(x =  resid)) + 
+  geom_histogram(binwidth = 1) + 
+  labs(title = "Histogram of Residuals",
+       x="Residuals",
+       y = "Count") + 
+  theme_bw() 
+```
 
 
 
