@@ -423,6 +423,7 @@ plot_summs(m2, scale = TRUE, inner_ci_level = .95, plot.distributions = TRUE)
 ```
 
 ```{r}
+plot(m2)
 resid <- HLMresid(m2, level = 1, type = "LS", standardize = TRUE)
 
 Index <- seq(1, nrow(resid))
